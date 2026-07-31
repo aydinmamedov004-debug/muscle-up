@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/theme/app_theme.dart';
-import 'app_shell.dart';
+import '../features/auth/auth_gate.dart';
 
 class MuscleUpApp extends StatelessWidget {
   const MuscleUpApp({super.key});
@@ -11,7 +11,7 @@ class MuscleUpApp extends StatelessWidget {
       title: 'Muscle-up',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.darkTheme,
-      home: const AppShell(),
+      home: const AuthGate(),
     );
   }
 }

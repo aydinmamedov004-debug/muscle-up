@@ -1,4 +1,4 @@
-package com.example.muscle_up
+package com.aydinmamedov.muscleup
 
 import io.flutter.embedding.android.FlutterActivity
 

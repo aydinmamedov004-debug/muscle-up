@@ -1,17 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
   // Colors
-  static const Color background = Color(0xFF0E0E0E);
-  static const Color surface = Color(0xFF181818);
-  static const Color primary = Color(0xFFFF4040);
-  static const Color text = Colors.white;
-  static const Color secondaryText = Color(0xFFA0A0A0);
+  static const Color background = Color(0xFF101010);
+  static const Color surface = Color(0xFF1C1C1C);
+  static const Color surfaceLight = Color(0xFF262626);
 
-  // Main Theme
+  static const Color primary = Color(0xFFFF3B30);
+
+  // Tinted background + matching foreground for icon chips (e.g. stat tiles).
+  static const Color accentTint = Color(0xFF3A1412);
+  static const Color accentSoft = Color(0xFFFFB3AD);
+
+  static const Color text = Color(0xFFF4F4F4);
+  static const Color secondaryText = Color(0xFFA0A0A0);
+  static final Color divider = Colors.white.withValues(alpha: 0.14);
+
   static ThemeData darkTheme = ThemeData(
     useMaterial3: true,
     brightness: Brightness.dark,
+
+    fontFamily: GoogleFonts.inter().fontFamily,
 
     scaffoldBackgroundColor: background,
 
@@ -21,35 +31,124 @@ class AppTheme {
       surface: surface,
     ),
 
-    appBarTheme: const AppBarTheme(
+    dividerColor: divider,
+
+    appBarTheme: AppBarTheme(
       backgroundColor: background,
       elevation: 0,
       centerTitle: true,
       titleTextStyle: TextStyle(
         color: text,
         fontSize: 22,
-        fontWeight: FontWeight.w700,
+        fontWeight: FontWeight.w600,
       ),
     ),
 
     cardTheme: CardThemeData(
       color: surface,
       elevation: 0,
+      margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(14),
       ),
     ),
 
-    textTheme: const TextTheme(
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: surfaceLight,
+      contentPadding: const EdgeInsets.symmetric(
+        horizontal: 14,
+        vertical: 12,
+      ),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: BorderSide.none,
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: BorderSide.none,
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: const BorderSide(
+          color: primary,
+          width: 2,
+        ),
+      ),
+    ),
+
+    // Primary actions: accent-outlined, not filled — matches the redesign's
+    // .btn-primary (transparent bg, accent border + text).
+    filledButtonTheme: FilledButtonThemeData(
+      style: FilledButton.styleFrom(
+        backgroundColor: Colors.transparent,
+        foregroundColor: primary,
+        side: const BorderSide(color: primary),
+        minimumSize: const Size(double.infinity, 52),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        textStyle: const TextStyle(
+          fontWeight: FontWeight.w600,
+          fontSize: 15,
+        ),
+      ),
+    ),
+
+    // Secondary actions: neutral-outlined, so they read as lower-priority
+    // than the accent-outlined primary buttons above.
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: OutlinedButton.styleFrom(
+        minimumSize: const Size(double.infinity, 48),
+        side: BorderSide(color: divider),
+        foregroundColor: text.withValues(alpha: 0.8),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+    ),
+
+    checkboxTheme: CheckboxThemeData(
+      fillColor: WidgetStateProperty.resolveWith(
+        (states) {
+          if (states.contains(WidgetState.selected)) {
+            return primary;
+          }
+          return Colors.transparent;
+        },
+      ),
+    ),
+
+    progressIndicatorTheme: const ProgressIndicatorThemeData(
+      color: primary,
+      linearTrackColor: surfaceLight,
+    ),
+
+    snackBarTheme: SnackBarThemeData(
+      backgroundColor: surfaceLight,
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+    ),
+
+    textTheme: TextTheme(
       headlineLarge: TextStyle(
         color: text,
-        fontSize: 32,
-        fontWeight: FontWeight.bold,
+        fontSize: 34,
+        fontWeight: FontWeight.w600,
+        letterSpacing: -0.5,
       ),
       headlineMedium: TextStyle(
         color: text,
-        fontSize: 24,
-        fontWeight: FontWeight.bold,
+        fontSize: 25,
+        fontWeight: FontWeight.w600,
+        letterSpacing: -0.3,
+      ),
+      titleLarge: TextStyle(
+        color: text,
+        fontSize: 22,
+        fontWeight: FontWeight.w600,
       ),
       bodyLarge: TextStyle(
         color: text,

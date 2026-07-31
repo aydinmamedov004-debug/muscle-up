@@ -1,41 +1,55 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'navigation_provider.dart';
+
+import '../features/coach/coach_screen.dart';
 import '../features/history/history_screen.dart';
 import '../features/home/home_screen.dart';
 import '../features/progress/progress_screen.dart';
 import '../features/settings/settings_screen.dart';
 import '../features/workout/workout_screen.dart';
 
-class AppShell extends StatefulWidget {
+class AppShell extends ConsumerWidget {
   const AppShell({super.key});
 
   @override
-  State<AppShell> createState() => _AppShellState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedIndex = ref.watch(navigationProvider);
 
-class _AppShellState extends State<AppShell> {
-  int _selectedIndex = 0;
+    final screens = [
+      const HomeScreen(),
+      const WorkoutScreen(),
+      const ProgressScreen(),
+      const HistoryScreen(),
+      const SettingsScreen(),
+    ];
 
-  final List<Widget> _screens = const [
-    HomeScreen(),
-    WorkoutScreen(),
-    ProgressScreen(),
-    HistoryScreen(),
-    SettingsScreen(),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
-      body: _screens[_selectedIndex],
+      body: IndexedStack(
+        index: selectedIndex,
+        children: screens,
+      ),
+
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const CoachScreen(),
+            ),
+          );
+        },
+        child: const Icon(Icons.chat_bubble_outline),
+      ),
 
       bottomNavigationBar: NavigationBar(
-        selectedIndex: _selectedIndex,
+        selectedIndex: selectedIndex,
 
         onDestinationSelected: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
+          ref
+              .read(navigationProvider.notifier)
+              .goTo(index);
         },
 
         destinations: const [

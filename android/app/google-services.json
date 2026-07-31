@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "832360674760",
+    "project_id": "muscleup-aydinmamedov",
+    "storage_bucket": "muscleup-aydinmamedov.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:832360674760:android:1c73fd4a9920284387bcfd",
+        "android_client_info": {
+          "package_name": "com.aydinmamedov.muscleup"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0DKbXPrbQJk8oHpLdGi96VQnYzShmWiU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
