@@ -2,6 +2,8 @@ import 'package:firebase_ai/firebase_ai.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../data/exercise_catalog.dart';
+import '../../../data/local/profile_provider.dart';
+import '../../../models/storage/user_profile.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../home/providers/dashboard_provider.dart';
 import '../../programs/providers/active_program_provider.dart';
@@ -17,6 +19,7 @@ class CoachController extends Notifier<List<ChatMessage>> {
     final name = ref.read(authStateProvider).value?.displayName;
     final activeProgram = ref.read(activeProgramProvider);
     final dashboard = ref.read(dashboardProvider);
+    final profile = ref.read(profileProvider);
 
     final systemInstruction = _buildSystemInstruction(
       name: name,
@@ -31,6 +34,7 @@ class CoachController extends Notifier<List<ChatMessage>> {
           : dashboard.workouts.first.workoutName,
       availableExercises:
           allExercises.map((exercise) => exercise.name).toList(),
+      profile: profile,
     );
 
     final model = FirebaseAI.googleAI().generativeModel(
@@ -100,6 +104,7 @@ String _buildSystemInstruction({
   required int totalWorkouts,
   required String? lastWorkoutName,
   required List<String> availableExercises,
+  required UserProfile? profile,
 }) {
   final buffer = StringBuffer()
     ..writeln(
@@ -138,6 +143,25 @@ String _buildSystemInstruction({
 
   if (lastWorkoutName != null) {
     buffer.writeln("Their most recent workout was \"$lastWorkoutName\".");
+  }
+
+  if (profile != null) {
+    final weight = profile.weightUnit == 'lb'
+        ? "${(profile.weightKg / 0.45359237).round()} lb"
+        : "${profile.weightKg.round()} kg";
+
+    final height = profile.heightUnit == 'ftIn'
+        ? "${(profile.heightCm / 2.54 / 12).floor()}'"
+            "${(profile.heightCm / 2.54 % 12).round()}\""
+        : "${profile.heightCm.round()} cm";
+
+    buffer.writeln(
+      "The user is ${profile.ageYears} years old, weighs $weight, and is "
+      "$height tall. They describe their training experience as "
+      "${profile.experienceLevel} and aim to work out ${profile.weeklyGoal} "
+      "${profile.weeklyGoal == 1 ? 'time' : 'times'} per week. Use this to "
+      "tailor advice — don't ask them for these details again.",
+    );
   }
 
   return buffer.toString();

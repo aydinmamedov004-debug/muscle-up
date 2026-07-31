@@ -5,12 +5,14 @@ import '../../models/storage/exercise_history.dart';
 import '../../models/storage/set_history.dart';
 import '../../models/storage/stored_exercise_template.dart';
 import '../../models/storage/stored_workout_program.dart';
+import '../../models/storage/user_profile.dart';
 import '../../models/storage/workout_history.dart';
 
 class HiveService {
   static const String workoutHistoryBox = "workout_history";
   static const String workoutProgramsBox = "workout_programs";
   static const String customExercisesBox = "custom_exercises";
+  static const String userProfileBox = "user_profile";
 
   static Future<void> initialize() async {
     await Hive.initFlutter();
@@ -22,10 +24,12 @@ class HiveService {
     Hive.registerAdapter(StoredExerciseTemplateAdapter());
     Hive.registerAdapter(StoredWorkoutProgramAdapter());
     Hive.registerAdapter(CustomExerciseAdapter());
+    Hive.registerAdapter(UserProfileAdapter());
 
     await Hive.openBox<WorkoutHistory>(workoutHistoryBox);
     await Hive.openBox<StoredWorkoutProgram>(workoutProgramsBox);
     await Hive.openBox<CustomExercise>(customExercisesBox);
+    await Hive.openBox<UserProfile>(userProfileBox);
   }
 
   static Box<WorkoutHistory> get historyBox =>
@@ -36,4 +40,7 @@ class HiveService {
 
   static Box<CustomExercise> get customExercisesBoxRef =>
       Hive.box<CustomExercise>(customExercisesBox);
+
+  static Box<UserProfile> get userProfileBoxRef =>
+      Hive.box<UserProfile>(userProfileBox);
 }

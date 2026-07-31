@@ -35,7 +35,9 @@ class HomeScreen extends ConsumerWidget {
       return "$timeOfDay! 💪";
     }
 
-    return "$timeOfDay, $name! 💪";
+    final firstName = name.trim().split(' ').first;
+
+    return "$timeOfDay, $firstName! 💪";
   }
 
   Future<void> _createFirstWorkout(
@@ -182,9 +184,9 @@ class HomeScreen extends ConsumerWidget {
 
                 const SizedBox(width: AppSpacing.sm),
 
-                const StatTile(
+                StatTile(
                   icon: Icons.local_fire_department,
-                  value: "-",
+                  value: stats.currentStreak.toString(),
                   label: "Streak",
                 ),
               ],

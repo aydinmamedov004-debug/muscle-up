@@ -21,7 +21,7 @@ class WorkoutRepository {
     await HiveService.historyBox.clear();
   }
 
-  DashboardStats getDashboardStats() {
+  DashboardStats getDashboardStats({required int weeklyGoal}) {
     final workouts = getWorkouts();
 
     int totalSeconds = 0;
@@ -33,7 +33,53 @@ class WorkoutRepository {
     return DashboardStats(
       totalWorkouts: workouts.length,
       totalTrainingTime: Duration(seconds: totalSeconds),
+      currentStreak: _calculateWeeklyStreak(workouts, weeklyGoal),
     );
+  }
+
+  /// The Monday (UTC-anchored, to sidestep DST edge cases in exact-Duration
+  /// subtraction from local midnight) that starts [date]'s calendar week.
+  DateTime _startOfWeek(DateTime date) {
+    final utcDate = DateTime.utc(date.year, date.month, date.day);
+    return utcDate.subtract(Duration(days: utcDate.weekday - 1));
+  }
+
+  /// A running total of active days across the user's current unbroken run
+  /// of weeks that met [weeklyGoal]. The in-progress week always counts and
+  /// is never itself treated as a shortfall — a week only "fails" once it's
+  /// fully in the past, at which point it stops the run (without being
+  /// added). Weeks that exceed the goal add their full day count, uncapped.
+  int _calculateWeeklyStreak(List<WorkoutHistory> workouts, int weeklyGoal) {
+    if (workouts.isEmpty || weeklyGoal <= 0) return 0;
+
+    final workoutDays = workouts
+        .map(
+          (w) => DateTime(
+            w.completedAt.year,
+            w.completedAt.month,
+            w.completedAt.day,
+          ),
+        )
+        .toSet();
+
+    final Map<DateTime, int> daysByWeek = {};
+    for (final day in workoutDays) {
+      final weekStart = _startOfWeek(day);
+      daysByWeek[weekStart] = (daysByWeek[weekStart] ?? 0) + 1;
+    }
+
+    final currentWeekStart = _startOfWeek(DateTime.now());
+    int total = daysByWeek[currentWeekStart] ?? 0;
+
+    var cursor = currentWeekStart.subtract(const Duration(days: 7));
+    while (true) {
+      final count = daysByWeek[cursor] ?? 0;
+      if (count < weeklyGoal) break;
+      total += count;
+      cursor = cursor.subtract(const Duration(days: 7));
+    }
+
+    return total;
   }
 
   List<ExerciseRecord> getExerciseRecords() {

@@ -8,6 +8,7 @@ import 'package:muscle_up/models/storage/exercise_history.dart';
 import 'package:muscle_up/models/storage/set_history.dart';
 import 'package:muscle_up/models/storage/stored_exercise_template.dart';
 import 'package:muscle_up/models/storage/stored_workout_program.dart';
+import 'package:muscle_up/models/storage/user_profile.dart';
 import 'package:muscle_up/models/storage/workout_history.dart';
 
 extension HiveRegistrar on HiveInterface {
@@ -17,6 +18,7 @@ extension HiveRegistrar on HiveInterface {
     registerAdapter(SetHistoryAdapter());
     registerAdapter(StoredExerciseTemplateAdapter());
     registerAdapter(StoredWorkoutProgramAdapter());
+    registerAdapter(UserProfileAdapter());
     registerAdapter(WorkoutHistoryAdapter());
   }
 }
@@ -28,6 +30,7 @@ extension IsolatedHiveRegistrar on IsolatedHiveInterface {
     registerAdapter(SetHistoryAdapter());
     registerAdapter(StoredExerciseTemplateAdapter());
     registerAdapter(StoredWorkoutProgramAdapter());
+    registerAdapter(UserProfileAdapter());
     registerAdapter(WorkoutHistoryAdapter());
   }
 }
