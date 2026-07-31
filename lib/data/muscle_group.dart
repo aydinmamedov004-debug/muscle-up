@@ -1,8 +1,10 @@
 enum MuscleGroup {
   chest,
-  shoulders,
   back,
-  arms,
+  shoulders,
+  biceps,
+  triceps,
+  forearms,
   legs,
   core;
 
@@ -10,16 +12,20 @@ enum MuscleGroup {
     switch (this) {
       case MuscleGroup.chest:
         return "Chest";
-      case MuscleGroup.shoulders:
-        return "Shoulders";
       case MuscleGroup.back:
         return "Back";
-      case MuscleGroup.arms:
-        return "Arms";
+      case MuscleGroup.shoulders:
+        return "Shoulders";
+      case MuscleGroup.biceps:
+        return "Biceps";
+      case MuscleGroup.triceps:
+        return "Triceps";
+      case MuscleGroup.forearms:
+        return "Forearms";
       case MuscleGroup.legs:
         return "Legs";
       case MuscleGroup.core:
-        return "Core";
+        return "Abs";
     }
   }
 
