@@ -13,6 +13,7 @@ class HiveService {
   static const String workoutProgramsBox = "workout_programs";
   static const String customExercisesBox = "custom_exercises";
   static const String userProfileBox = "user_profile";
+  static const String appSettingsBox = "app_settings";
 
   static Future<void> initialize() async {
     await Hive.initFlutter();
@@ -30,6 +31,7 @@ class HiveService {
     await Hive.openBox<StoredWorkoutProgram>(workoutProgramsBox);
     await Hive.openBox<CustomExercise>(customExercisesBox);
     await Hive.openBox<UserProfile>(userProfileBox);
+    await Hive.openBox(appSettingsBox);
   }
 
   static Box<WorkoutHistory> get historyBox =>
@@ -43,4 +45,6 @@ class HiveService {
 
   static Box<UserProfile> get userProfileBoxRef =>
       Hive.box<UserProfile>(userProfileBox);
+
+  static Box get appSettingsBoxRef => Hive.box(appSettingsBox);
 }
