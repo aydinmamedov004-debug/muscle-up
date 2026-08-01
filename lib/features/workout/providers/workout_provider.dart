@@ -22,6 +22,22 @@ class WorkoutSessionNotifier extends Notifier<WorkoutSession> {
       );
     }
 
+    // The exercise list only populates once the user explicitly begins a
+    // session (from Home's Start Workout button) — otherwise the Workout
+    // tab would immediately refill with today's program right after the
+    // user finishes and returns home.
+    final active = ref.watch(workoutSessionActiveProvider);
+
+    if (!active) {
+      return WorkoutSession(
+        workout: WorkoutDay(
+          name: program.name,
+          exercises: const [],
+        ),
+        exercises: const [],
+      );
+    }
+
     final exercises = program.exercises.map((exercise) {
       return Exercise(
         name: exercise.name,
@@ -39,6 +55,14 @@ class WorkoutSessionNotifier extends Notifier<WorkoutSession> {
       ),
       exercises: exercises,
     );
+  }
+
+  void beginSession() {
+    ref.read(workoutSessionActiveProvider.notifier).state = true;
+  }
+
+  void endSession() {
+    ref.read(workoutSessionActiveProvider.notifier).state = false;
   }
 
   void startWorkout() {
@@ -80,3 +104,5 @@ final workoutSessionProvider =
     NotifierProvider<WorkoutSessionNotifier, WorkoutSession>(
   WorkoutSessionNotifier.new,
 );
+
+final workoutSessionActiveProvider = StateProvider<bool>((ref) => false);

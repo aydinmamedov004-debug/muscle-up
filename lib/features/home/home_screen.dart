@@ -10,6 +10,7 @@ import '../programs/create_program_flow.dart';
 import '../programs/program_list_screen.dart';
 import 'providers/dashboard_provider.dart';
 import '../programs/providers/active_program_provider.dart';
+import '../workout/providers/workout_provider.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -52,6 +53,7 @@ class HomeScreen extends ConsumerWidget {
 
     if (!context.mounted) return;
 
+    ref.read(workoutSessionProvider.notifier).beginSession();
     ref.read(navigationProvider.notifier).goTo(1);
   }
 
@@ -129,6 +131,9 @@ class HomeScreen extends ConsumerWidget {
                         text: "START WORKOUT",
                         icon: Icons.play_arrow,
                         onPressed: () {
+                          ref
+                              .read(workoutSessionProvider.notifier)
+                              .beginSession();
                           ref.read(navigationProvider.notifier).goTo(1);
                         },
                       ),

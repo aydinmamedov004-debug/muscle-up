@@ -118,7 +118,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> {
       if (!mounted) return;
 
       ref.read(navigationProvider.notifier).goTo(0);
-      ref.invalidate(workoutSessionProvider);
+      ref.read(workoutSessionProvider.notifier).endSession();
     } finally {
       if (mounted) setState(() => isFinishing = false);
     }
@@ -147,24 +147,32 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> {
         : completedExercises / session.exercises.length;
 
     if (session.exercises.isEmpty) {
+      final activeProgram = ref.watch(activeProgramProvider);
+      final hasProgram = activeProgram != null;
+
       return Scaffold(
         appBar: AppBar(
           title: Text(session.workout.name),
         ),
         body: SafeArea(
           child: EmptyState(
-            icon: Icons.fitness_center,
-            title: "No Program Selected",
-            subtitle:
-                "Create a workout program to start training.",
-            buttonText: "Create Workout",
-            onPressed: () async {
-              final program = await runCreateProgramFlow(context);
+            icon: hasProgram ? Icons.play_arrow : Icons.fitness_center,
+            title: hasProgram ? "Ready to Train?" : "No Program Selected",
+            subtitle: hasProgram
+                ? "Tap Start Workout to begin your ${activeProgram.name} session."
+                : "Create a workout program to start training.",
+            buttonText: hasProgram ? "Start Workout" : "Create Workout",
+            onPressed: hasProgram
+                ? () => ref
+                    .read(workoutSessionProvider.notifier)
+                    .beginSession()
+                : () async {
+                    final program = await runCreateProgramFlow(context);
 
-              if (program == null) return;
+                    if (program == null) return;
 
-              ref.invalidate(activeProgramProvider);
-            },
+                    ref.invalidate(activeProgramProvider);
+                  },
           ),
         ),
       );
