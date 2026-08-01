@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../app/navigation_provider.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../models/workout_session.dart';
 import '../../shared/widgets/empty_state.dart';
@@ -115,6 +116,10 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> {
           totalSets: totalSets,
         ),
       );
+
+      if (!mounted) return;
+
+      ref.read(navigationProvider.notifier).goTo(0);
     } finally {
       if (mounted) setState(() => isFinishing = false);
     }
