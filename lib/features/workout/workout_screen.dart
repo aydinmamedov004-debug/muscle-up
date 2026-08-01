@@ -83,8 +83,6 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> {
         WorkoutMapper.fromSession(session),
       );
 
-      ref.invalidate(workoutSessionProvider);
-
       if (!mounted) return;
 
       final afterStats = repository.getDashboardStats(weeklyGoal: weeklyGoal);
@@ -120,6 +118,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> {
       if (!mounted) return;
 
       ref.read(navigationProvider.notifier).goTo(0);
+      ref.invalidate(workoutSessionProvider);
     } finally {
       if (mounted) setState(() => isFinishing = false);
     }
