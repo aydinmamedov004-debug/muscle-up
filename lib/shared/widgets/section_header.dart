@@ -28,7 +28,7 @@ class SectionHeader extends StatelessWidget {
                   .headlineMedium,
             ),
           ),
-          if (trailing != null) trailing!,
+          ?trailing,
         ],
       ),
     );

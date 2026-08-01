@@ -169,7 +169,7 @@ class _ExerciseLibraryScreenState extends State<ExerciseLibraryScreen> {
                 ? const Center(child: Text("No exercises found"))
                 : ListView.separated(
                     itemCount: exercises.length,
-                    separatorBuilder: (_, __) => const Divider(height: 1),
+                    separatorBuilder: (_, _) => const Divider(height: 1),
                     itemBuilder: (context, index) {
                       final exercise = exercises[index];
                       final isSelected = selected.contains(exercise.name);

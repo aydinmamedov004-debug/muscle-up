@@ -132,10 +132,6 @@ class _EditProgramScreenState
     int oldIndex,
     int newIndex,
   ) async {
-    if (newIndex > oldIndex) {
-      newIndex--;
-    }
-
     setState(() {
       final exercise =
           widget.program.exercises.removeAt(oldIndex);
@@ -185,7 +181,7 @@ class _EditProgramScreenState
               padding: const EdgeInsets.only(bottom: 100),
               itemCount:
                   widget.program.exercises.length,
-              onReorder: reorderExercises,
+              onReorderItem: reorderExercises,
               itemBuilder: (_, index) {
                 final exercise =
                     widget.program.exercises[index];
