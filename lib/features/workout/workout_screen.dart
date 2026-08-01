@@ -9,9 +9,11 @@ import '../../shared/widgets/empty_state.dart';
 import '../../shared/widgets/primary_button.dart';
 import '../programs/create_program_flow.dart';
 import '../programs/providers/active_program_provider.dart';
+import '../streak_celebration/streak_celebration_screen.dart';
 import '../workout/providers/workout_provider.dart';
 import '../workout_summary/widgets/workout_summary_dialog.dart';
 import 'widgets/exercise_card.dart';
+import '../../data/local/profile_provider.dart';
 import '../../data/local/workout_repository.dart';
 import '../../data/mappers/workout_mapper.dart';
 
@@ -70,6 +72,10 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> {
     setState(() => isFinishing = true);
 
     try {
+      final weeklyGoal = ref.read(profileProvider)!.weeklyGoal;
+      final beforeStats = repository.getDashboardStats(weeklyGoal: weeklyGoal);
+      final beforeWeekDone = repository.getCurrentWeekCompletionFlags();
+
       ref.read(workoutSessionProvider.notifier).finishWorkout();
 
       await repository.saveWorkout(
@@ -79,6 +85,26 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> {
       ref.invalidate(workoutSessionProvider);
 
       if (!mounted) return;
+
+      final afterStats = repository.getDashboardStats(weeklyGoal: weeklyGoal);
+      final afterWeekDone = repository.getCurrentWeekCompletionFlags();
+
+      if (afterStats.currentStreak != beforeStats.currentStreak) {
+        final todayIndex = DateTime.now().weekday - 1;
+        final animateToday =
+            !beforeWeekDone[todayIndex] && afterWeekDone[todayIndex];
+
+        await showStreakCelebration(
+          context,
+          fromStreak: beforeStats.currentStreak,
+          toStreak: afterStats.currentStreak,
+          weekDone: afterWeekDone,
+          todayIndex: todayIndex,
+          animateToday: animateToday,
+        );
+
+        if (!mounted) return;
+      }
 
       await showDialog(
         context: context,

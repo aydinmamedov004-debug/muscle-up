@@ -17,6 +17,16 @@ class AppTheme {
   static const Color secondaryText = Color(0xFFA0A0A0);
   static final Color divider = Colors.white.withValues(alpha: 0.14);
 
+  // Streak celebration tokens — alpha-blended text variants and glow colors
+  // with no existing equivalent (secondaryText is a solid gray, not the
+  // white-alpha system this high-fidelity screen is built on).
+  static final Color textMuted = text.withValues(alpha: 0.55);
+  static final Color textFaint = text.withValues(alpha: 0.28);
+  static const Color accentLightest = Color(0xFFFFE0DC);
+  static const Color accentCoral = Color(0xFFFF7D72);
+  static const Color glowDeep = Color(0xFF6B1611);
+  static const Color glowDeepest = Color(0xFF430D0D);
+
   static ThemeData darkTheme = ThemeData(
     useMaterial3: true,
     brightness: Brightness.dark,

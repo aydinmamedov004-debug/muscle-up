@@ -82,6 +82,28 @@ class WorkoutRepository {
     return total;
   }
 
+  /// Whether the current calendar week (Monday-first, index 0 = Monday) has
+  /// a completed workout on each of its 7 days, up to and including today.
+  List<bool> getCurrentWeekCompletionFlags() {
+    final workoutDays = getWorkouts()
+        .map(
+          (w) => DateTime(
+            w.completedAt.year,
+            w.completedAt.month,
+            w.completedAt.day,
+          ),
+        )
+        .toSet();
+
+    final weekStart = _startOfWeek(DateTime.now());
+
+    return List.generate(7, (i) {
+      final utcDay = weekStart.add(Duration(days: i));
+      final localDay = DateTime(utcDay.year, utcDay.month, utcDay.day);
+      return workoutDays.contains(localDay);
+    });
+  }
+
   List<ExerciseRecord> getExerciseRecords() {
     final workouts = getWorkouts();
 
