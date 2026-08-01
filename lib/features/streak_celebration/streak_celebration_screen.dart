@@ -3,7 +3,9 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 
 import '../../core/theme/app_theme.dart';
+import '../../shared/navigation/slide_page_route.dart';
 import '../../shared/widgets/primary_button.dart';
+import '../workout_summary/workout_summary_screen.dart';
 import 'streak_motion.dart';
 import 'widgets/burst_effect.dart';
 import 'widgets/embers_field.dart';
@@ -13,10 +15,9 @@ import 'widgets/week_pip_strip.dart';
 
 const _milestoneDays = {7, 30, 100};
 
-/// Pushes the full-screen streak celebration takeover and returns once the
-/// user dismisses it. Uses a zero-duration route — this app's default
-/// ~300ms push transition would otherwise visibly run concurrently with the
-/// celebration's own `el=0` beat.
+/// Pushes the full-screen streak celebration takeover with a slide
+/// transition and returns once the user has moved past both the
+/// celebration and the workout summary that follows it.
 Future<void> showStreakCelebration(
   BuildContext context, {
   required int fromStreak,
@@ -24,21 +25,18 @@ Future<void> showStreakCelebration(
   required List<bool> weekDone,
   required int todayIndex,
   required bool animateToday,
+  required WorkoutSummaryData summary,
 }) {
   return Navigator.of(context).push(
-    PageRouteBuilder(
-      opaque: true,
-      transitionDuration: Duration.zero,
-      reverseTransitionDuration: Duration.zero,
-      pageBuilder: (context, animation, secondaryAnimation) {
-        return StreakCelebrationScreen(
-          fromStreak: fromStreak,
-          toStreak: toStreak,
-          weekDone: weekDone,
-          todayIndex: todayIndex,
-          animateToday: animateToday,
-        );
-      },
+    slidePageRoute<void>(
+      (context) => StreakCelebrationScreen(
+        fromStreak: fromStreak,
+        toStreak: toStreak,
+        weekDone: weekDone,
+        todayIndex: todayIndex,
+        animateToday: animateToday,
+        summary: summary,
+      ),
     ),
   );
 }
@@ -49,6 +47,7 @@ class StreakCelebrationScreen extends StatefulWidget {
   final List<bool> weekDone;
   final int todayIndex;
   final bool animateToday;
+  final WorkoutSummaryData summary;
 
   const StreakCelebrationScreen({
     super.key,
@@ -57,6 +56,7 @@ class StreakCelebrationScreen extends StatefulWidget {
     required this.weekDone,
     required this.todayIndex,
     required this.animateToday,
+    required this.summary,
   });
 
   @override
@@ -260,7 +260,15 @@ class _StreakCelebrationScreenState extends State<StreakCelebrationScreen>
                   PrimaryButton(
                     text: 'CONTINUE',
                     icon: Icons.arrow_forward,
-                    onPressed: () => Navigator.of(context).pop(),
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        slidePageRoute<void>(
+                          (context) => WorkoutSummaryScreen(
+                            summary: widget.summary,
+                          ),
+                        ),
+                      );
+                    },
                   ),
                   const SizedBox(height: 32),
                 ],

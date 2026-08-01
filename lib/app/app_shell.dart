@@ -9,25 +9,67 @@ import '../features/home/home_screen.dart';
 import '../features/progress/progress_screen.dart';
 import '../features/settings/settings_screen.dart';
 import '../features/workout/workout_screen.dart';
+import '../shared/widgets/keep_alive_wrapper.dart';
 
-class AppShell extends ConsumerWidget {
+class AppShell extends ConsumerStatefulWidget {
   const AppShell({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<AppShell> createState() => _AppShellState();
+}
+
+class _AppShellState extends ConsumerState<AppShell> {
+  late final PageController _pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(
+      initialPage: ref.read(navigationProvider),
+    );
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final selectedIndex = ref.watch(navigationProvider);
 
-    final screens = [
-      const HomeScreen(),
-      const WorkoutScreen(),
-      const ProgressScreen(),
-      const HistoryScreen(),
-      const SettingsScreen(),
+    // Keeps the swipeable PageView in sync whenever something other than a
+    // direct swipe changes the tab (bottom nav taps, the settings gear icon,
+    // returning home after finishing a workout, etc.) with the same slide
+    // motion a swipe would produce.
+    ref.listen<int>(navigationProvider, (previous, next) {
+      if (!_pageController.hasClients) return;
+      if (_pageController.page?.round() == next) return;
+
+      _pageController.animateToPage(
+        next,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOutCubic,
+      );
+    });
+
+    final screens = const [
+      KeepAliveWrapper(child: HomeScreen()),
+      KeepAliveWrapper(child: WorkoutScreen()),
+      KeepAliveWrapper(child: ProgressScreen()),
+      KeepAliveWrapper(child: HistoryScreen()),
+      KeepAliveWrapper(child: SettingsScreen()),
     ];
 
     return Scaffold(
-      body: IndexedStack(
-        index: selectedIndex,
+      body: PageView(
+        controller: _pageController,
+        onPageChanged: (index) {
+          if (ref.read(navigationProvider) != index) {
+            ref.read(navigationProvider.notifier).goTo(index);
+          }
+        },
         children: screens,
       ),
 

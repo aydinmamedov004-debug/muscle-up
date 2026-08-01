@@ -6,13 +6,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app/navigation_provider.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../models/workout_session.dart';
+import '../../shared/navigation/slide_page_route.dart';
 import '../../shared/widgets/empty_state.dart';
 import '../../shared/widgets/primary_button.dart';
 import '../programs/create_program_flow.dart';
 import '../programs/providers/active_program_provider.dart';
 import '../streak_celebration/streak_celebration_screen.dart';
 import '../workout/providers/workout_provider.dart';
-import '../workout_summary/widgets/workout_summary_dialog.dart';
+import '../workout_summary/workout_summary_screen.dart';
 import 'widgets/exercise_card.dart';
 import '../../data/local/profile_provider.dart';
 import '../../data/local/workout_repository.dart';
@@ -88,6 +89,13 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> {
       final afterStats = repository.getDashboardStats(weeklyGoal: weeklyGoal);
       final afterWeekDone = repository.getCurrentWeekCompletionFlags();
 
+      final summary = WorkoutSummaryData(
+        duration: formatDuration(session.duration),
+        totalExercises: session.exercises.length,
+        completedSets: completedSets,
+        totalSets: totalSets,
+      );
+
       if (afterStats.currentStreak != beforeStats.currentStreak) {
         final todayIndex = DateTime.now().weekday - 1;
         final animateToday =
@@ -100,20 +108,15 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> {
           weekDone: afterWeekDone,
           todayIndex: todayIndex,
           animateToday: animateToday,
+          summary: summary,
         );
-
-        if (!mounted) return;
+      } else {
+        await Navigator.of(context).push(
+          slidePageRoute<void>(
+            (context) => WorkoutSummaryScreen(summary: summary),
+          ),
+        );
       }
-
-      await showDialog(
-        context: context,
-        builder: (_) => WorkoutSummaryDialog(
-          duration: formatDuration(session.duration),
-          totalExercises: session.exercises.length,
-          completedSets: completedSets,
-          totalSets: totalSets,
-        ),
-      );
 
       if (!mounted) return;
 
