@@ -16,6 +16,11 @@ workflows:
         script: flutter test
       - name: Build iOS (unsigned)
         script: flutter build ios --release --no-codesign
+      - name: Package unsigned IPA
+        script: |
+          mkdir -p Payload
+          cp -r build/ios/iphoneos/Runner.app Payload/
+          zip -r muscleup-unsigned.ipa Payload
       - name: Build iOS (simulator)
         script: flutter build ios --debug --simulator
       - name: Run on Simulator and capture screenshot
@@ -49,6 +54,7 @@ workflows:
           fi
     artifacts:
       - build/ios/iphoneos/*.app
+      - muscleup-unsigned.ipa
       - simulator_screenshot.png
     triggering:
       events:
