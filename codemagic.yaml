@@ -16,8 +16,21 @@ workflows:
         script: flutter test
       - name: Build iOS (unsigned)
         script: flutter build ios --release --no-codesign
+      - name: Build iOS (simulator)
+        script: flutter build ios --debug --simulator
+      - name: Run on Simulator and capture screenshot
+        script: |
+          DEVICE_ID=$(xcrun simctl list devices available | grep -m1 "iPhone" | grep -oE '[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}')
+          echo "Using simulator: $DEVICE_ID"
+          xcrun simctl boot "$DEVICE_ID" || true
+          xcrun simctl bootstatus "$DEVICE_ID" -b
+          xcrun simctl install "$DEVICE_ID" build/ios/iphonesimulator/Runner.app
+          xcrun simctl launch "$DEVICE_ID" com.aydinmamedov.muscleup
+          sleep 8
+          xcrun simctl io "$DEVICE_ID" screenshot simulator_screenshot.png
     artifacts:
       - build/ios/iphoneos/*.app
+      - simulator_screenshot.png
     triggering:
       events:
         - push
