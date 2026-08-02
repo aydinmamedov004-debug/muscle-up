@@ -24,10 +24,29 @@ workflows:
           echo "Using simulator: $DEVICE_ID"
           xcrun simctl boot "$DEVICE_ID" || true
           xcrun simctl bootstatus "$DEVICE_ID" -b
+          # bootstatus reporting "Finished" doesn't guarantee springboard is
+          # ready to launch apps yet — give it a moment, then retry launch.
+          sleep 5
           xcrun simctl install "$DEVICE_ID" build/ios/iphonesimulator/Runner.app
-          xcrun simctl launch "$DEVICE_ID" com.aydinmamedov.muscleup
+
+          launched=0
+          for attempt in 1 2 3 4 5; do
+            if xcrun simctl launch "$DEVICE_ID" com.aydinmamedov.muscleup; then
+              launched=1
+              break
+            fi
+            echo "Launch attempt $attempt failed, retrying in 5s..."
+            sleep 5
+          done
+
           sleep 8
-          xcrun simctl io "$DEVICE_ID" screenshot simulator_screenshot.png
+          xcrun simctl io "$DEVICE_ID" screenshot "$CM_BUILD_DIR/simulator_screenshot.png"
+
+          if [ "$launched" -eq 0 ]; then
+            echo "App never launched successfully — recent crash reports:"
+            find "$HOME/Library/Logs/DiagnosticReports" -iname "*muscleup*" -exec cat {} \; || true
+            exit 1
+          fi
     artifacts:
       - build/ios/iphoneos/*.app
       - simulator_screenshot.png
