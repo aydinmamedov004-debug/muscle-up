@@ -75,11 +75,23 @@ class _DigitColumn extends StatelessWidget {
       width: StreakCounter._columnWidth,
       child: Transform.translate(
         offset: Offset(0, frame.translateY),
-        child: Column(
-          children: [
-            _glyph(frame.outgoing),
-            _glyph(frame.incoming),
-          ],
+        // The outgoing/incoming glyphs are each a full lineBox tall, so the
+        // pair is always taller than the ClipRect viewport below — that's
+        // the point (only one glyph shows at a time; the transform slides
+        // the other out). OverflowBox tells the framework this is
+        // deliberate instead of tripping its debug-only RenderFlex overflow
+        // warning; the actual cropping still comes from ClipRect.
+        child: OverflowBox(
+          alignment: Alignment.topCenter,
+          minHeight: 0,
+          maxHeight: double.infinity,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _glyph(frame.outgoing),
+              _glyph(frame.incoming),
+            ],
+          ),
         ),
       ),
     );

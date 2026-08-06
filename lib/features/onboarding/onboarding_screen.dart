@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme/app_spacing.dart';
+import '../../core/theme/app_theme.dart';
 import '../../data/local/profile_repository.dart';
 import '../../models/storage/user_profile.dart';
 import '../../shared/widgets/primary_button.dart';
@@ -273,7 +274,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   const SizedBox(height: AppSpacing.md),
                   Text(
                     errorMessage!,
-                    style: const TextStyle(color: Colors.redAccent),
+                    style: const TextStyle(color: AppTheme.primary),
                   ),
                 ],
 

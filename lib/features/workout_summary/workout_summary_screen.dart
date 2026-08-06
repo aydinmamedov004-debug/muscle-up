@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/theme/app_theme.dart';
 import '../../shared/widgets/primary_button.dart';
 
 /// Bundles the stats a finished workout hands off to [WorkoutSummaryScreen]
@@ -44,7 +45,7 @@ class WorkoutSummaryScreen extends StatelessWidget {
               title,
               style: const TextStyle(
                 fontSize: 18,
-                color: Colors.grey,
+                color: AppTheme.secondaryText,
               ),
             ),
             Text(

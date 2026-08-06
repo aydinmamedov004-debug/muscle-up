@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/theme/app_theme.dart';
 import '../../../data/exercise_catalog.dart';
 import '../../../models/exercise.dart';
 import '../../../shared/widgets/app_card.dart';
@@ -93,8 +94,8 @@ class ExerciseCard extends ConsumerWidget {
                     if (progress.hasHistory) ...[
                       Text(
                         "Last: ${progress.lastWeight ?? "-"} kg × ${progress.lastReps ?? "-"} reps",
-                        style: TextStyle(
-                          color: Colors.grey.shade400,
+                        style: const TextStyle(
+                          color: AppTheme.secondaryText,
                           fontSize: 13,
                         ),
                       ),
@@ -115,8 +116,8 @@ class ExerciseCard extends ConsumerWidget {
 
                     Text(
                       "$completedSets / ${exercise.sets.length} sets completed",
-                      style: TextStyle(
-                        color: Colors.grey.shade400,
+                      style: const TextStyle(
+                        color: AppTheme.secondaryText,
                       ),
                     ),
                   ],
@@ -133,7 +134,7 @@ class ExerciseCard extends ConsumerWidget {
               vertical: 10,
             ),
             decoration: BoxDecoration(
-              color: Colors.grey.shade900,
+              color: AppTheme.surface,
               borderRadius: BorderRadius.circular(10),
             ),
             child: const Row(

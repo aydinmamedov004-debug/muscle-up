@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/navigation_provider.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/theme/app_theme.dart';
 import '../../models/workout_session.dart';
 import '../../shared/navigation/slide_page_route.dart';
 import '../../shared/widgets/empty_state.dart';
@@ -202,14 +203,14 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.grey.shade900,
+                color: AppTheme.surface,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
                 children: [
                   const Text(
                     "Workout Time",
-                    style: TextStyle(color: Colors.grey),
+                    style: TextStyle(color: AppTheme.secondaryText),
                   ),
                   const SizedBox(height: 6),
                   Text(
@@ -228,7 +229,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> {
             Text(
               "$completedExercises / ${session.exercises.length} exercises completed",
               style: const TextStyle(
-                color: Colors.grey,
+                color: AppTheme.secondaryText,
                 fontSize: 18,
               ),
             ),
@@ -257,7 +258,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> {
               "Notes",
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                color: Colors.grey,
+                color: AppTheme.secondaryText,
                 letterSpacing: 1,
               ),
             ),

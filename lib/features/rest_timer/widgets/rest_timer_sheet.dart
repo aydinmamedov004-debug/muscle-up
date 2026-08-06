@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import '../../../core/theme/app_theme.dart';
+
 class RestTimerSheet extends StatefulWidget {
   const RestTimerSheet({super.key});
 
@@ -54,7 +56,7 @@ class _RestTimerSheetState extends State<RestTimerSheet> {
               width: 48,
               height: 5,
               decoration: BoxDecoration(
-                color: Colors.grey.shade700,
+                color: AppTheme.divider,
                 borderRadius: BorderRadius.circular(20),
               ),
             ),
@@ -65,7 +67,7 @@ class _RestTimerSheetState extends State<RestTimerSheet> {
               "Rest Time",
               style: TextStyle(
                 fontSize: 18,
-                color: Colors.grey,
+                color: AppTheme.secondaryText,
               ),
             ),
 

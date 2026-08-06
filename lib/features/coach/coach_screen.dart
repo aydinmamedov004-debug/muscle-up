@@ -158,7 +158,7 @@ class _MessageBubble extends StatelessWidget {
         ),
         child: Text(
           message.text,
-          style: const TextStyle(color: Colors.white),
+          style: const TextStyle(color: AppTheme.text),
         ),
       ),
     );

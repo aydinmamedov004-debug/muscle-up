@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/theme/app_theme.dart';
 import '../../models/storage/stored_exercise_template.dart';
 import '../../models/storage/stored_workout_program.dart';
 import '../exercises/exercise_library_screen.dart';
@@ -193,7 +194,7 @@ class _EditProgramScreenState
                   direction:
                       DismissDirection.endToStart,
                   background: Container(
-                    color: Colors.red,
+                    color: AppTheme.primary,
                     alignment: Alignment.centerRight,
                     padding:
                         const EdgeInsets.only(right: 24),

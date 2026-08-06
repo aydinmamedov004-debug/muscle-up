@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/theme/app_theme.dart';
 import '../../models/storage/workout_history.dart';
 
 class WorkoutDetailsScreen extends StatelessWidget {
@@ -39,7 +40,7 @@ class WorkoutDetailsScreen extends StatelessWidget {
           Text(
             formatDuration(workout.durationSeconds),
             style: const TextStyle(
-              color: Colors.grey,
+              color: AppTheme.secondaryText,
               fontSize: 18,
             ),
           ),
@@ -106,8 +107,8 @@ class WorkoutDetailsScreen extends StatelessWidget {
                                   ? Icons.check_circle
                                   : Icons.cancel,
                               color: set.completed
-                                  ? Colors.green
-                                  : Colors.grey,
+                                  ? AppTheme.success
+                                  : AppTheme.secondaryText,
                             ),
                           ],
                         ),

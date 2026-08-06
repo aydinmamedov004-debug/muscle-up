@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/theme/app_theme.dart';
 import '../../../models/workout_set.dart';
 import '../../rest_timer/widgets/rest_timer_sheet.dart';
 
@@ -136,7 +137,7 @@ class _SetRowState extends State<SetRow> {
             IconButton(
               icon: const Icon(
                 Icons.delete_outline,
-                color: Colors.red,
+                color: AppTheme.primary,
               ),
               onPressed: widget.onDelete,
             ),

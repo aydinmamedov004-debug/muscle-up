@@ -63,7 +63,7 @@ class ProgramCard extends StatelessWidget {
               IconButton(
                 icon: const Icon(
                   Icons.delete_outline,
-                  color: Colors.red,
+                  color: AppTheme.primary,
                 ),
                 onPressed: onDelete,
               ),

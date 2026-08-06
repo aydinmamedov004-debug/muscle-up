@@ -17,6 +17,10 @@ class AppTheme {
   static const Color secondaryText = Color(0xFFA0A0A0);
   static final Color divider = Colors.white.withValues(alpha: 0.14);
 
+  // "Completed" affordance (e.g. finished workout days) — the app has no
+  // other use for green, so this is the one deliberate spot of color.
+  static const Color success = Color(0xFF34C759);
+
   // Streak celebration tokens — alpha-blended text variants and glow colors
   // with no existing equivalent (secondaryText is a solid gray, not the
   // white-alpha system this high-fidelity screen is built on).

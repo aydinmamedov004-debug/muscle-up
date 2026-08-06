@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/navigation_provider.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/theme/app_theme.dart';
 import '../../shared/widgets/primary_button.dart';
 import '../../shared/widgets/stat_tile.dart';
 import '../auth/providers/auth_provider.dart';
@@ -106,7 +107,7 @@ class HomeScreen extends ConsumerWidget {
                       "TODAY'S WORKOUT",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: Colors.grey,
+                        color: AppTheme.secondaryText,
                         letterSpacing: 1,
                       ),
                     ),

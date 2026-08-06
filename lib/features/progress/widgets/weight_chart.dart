@@ -55,7 +55,7 @@ class WeightChart extends StatelessWidget {
                     "${point.maxWeight.toStringAsFixed(1)} kg\n"
                     "${DateFormat('d MMM').format(point.date)}",
                     const TextStyle(
-                      color: Colors.white,
+                      color: AppTheme.text,
                       fontWeight: FontWeight.bold,
                       fontSize: 12,
                     ),

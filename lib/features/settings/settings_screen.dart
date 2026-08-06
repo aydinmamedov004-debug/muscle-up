@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/theme/app_theme.dart';
 import '../../data/local/program_repository.dart';
 import '../../data/local/workout_repository.dart';
 import '../../shared/widgets/app_card.dart';
@@ -118,7 +119,7 @@ class SettingsScreen extends ConsumerWidget {
                         ),
                         Text(
                           user?.email ?? "",
-                          style: TextStyle(color: Colors.grey.shade400),
+                          style: const TextStyle(color: AppTheme.secondaryText),
                         ),
                       ],
                     ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme/app_spacing.dart';
+import '../../core/theme/app_theme.dart';
 import '../../shared/widgets/primary_button.dart';
 import 'providers/auth_provider.dart';
 import 'sign_up_screen.dart';
@@ -91,7 +92,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                     const SizedBox(height: AppSpacing.md),
                     Text(
                       errorMessage!,
-                      style: const TextStyle(color: Colors.redAccent),
+                      style: const TextStyle(color: AppTheme.primary),
                     ),
                   ],
 

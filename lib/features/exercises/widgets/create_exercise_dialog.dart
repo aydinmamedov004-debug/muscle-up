@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/theme/app_theme.dart';
 import '../../../data/exercise_catalog.dart';
 import '../../../data/muscle_group.dart';
 
@@ -61,7 +62,7 @@ class _CreateExerciseDialogState extends State<CreateExerciseDialog> {
 
             const Text(
               "Muscle group",
-              style: TextStyle(color: Colors.grey),
+              style: TextStyle(color: AppTheme.secondaryText),
             ),
 
             const SizedBox(height: 8),
@@ -84,7 +85,7 @@ class _CreateExerciseDialogState extends State<CreateExerciseDialog> {
               const SizedBox(height: 12),
               Text(
                 errorMessage!,
-                style: const TextStyle(color: Colors.redAccent),
+                style: const TextStyle(color: AppTheme.primary),
               ),
             ],
           ],

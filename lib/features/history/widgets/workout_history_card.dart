@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/theme/app_theme.dart';
 import '../../../models/storage/workout_history.dart';
 
 class WorkoutHistoryCard extends StatelessWidget {
@@ -65,7 +66,7 @@ class WorkoutHistoryCard extends StatelessWidget {
                     onPressed: onDelete,
                     icon: const Icon(
                       Icons.delete_outline,
-                      color: Colors.red,
+                      color: AppTheme.primary,
                     ),
                   ),
 
@@ -82,7 +83,7 @@ class WorkoutHistoryCard extends StatelessWidget {
                   const Icon(
                     Icons.calendar_today,
                     size: 18,
-                    color: Colors.grey,
+                    color: AppTheme.secondaryText,
                   ),
                   const SizedBox(width: 8),
                   Text(formattedDate),
@@ -96,7 +97,7 @@ class WorkoutHistoryCard extends StatelessWidget {
                   const Icon(
                     Icons.timer_outlined,
                     size: 18,
-                    color: Colors.grey,
+                    color: AppTheme.secondaryText,
                   ),
                   const SizedBox(width: 8),
                   Text(formattedDuration),
@@ -110,7 +111,7 @@ class WorkoutHistoryCard extends StatelessWidget {
                   const Icon(
                     Icons.format_list_numbered,
                     size: 18,
-                    color: Colors.grey,
+                    color: AppTheme.secondaryText,
                   ),
                   const SizedBox(width: 8),
                   Text(

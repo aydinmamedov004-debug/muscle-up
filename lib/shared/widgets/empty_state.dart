@@ -66,10 +66,7 @@ class EmptyState extends StatelessWidget {
                 style: Theme.of(context)
                     .textTheme
                     .bodyMedium
-                    ?.copyWith(
-                      color: Colors.grey,
-                      height: 1.5,
-                    ),
+                    ?.copyWith(height: 1.5),
                 textAlign: TextAlign.center,
               ),
 
