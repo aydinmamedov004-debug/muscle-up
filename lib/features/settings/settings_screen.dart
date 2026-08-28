@@ -1,9 +1,13 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_theme.dart';
+import '../../data/local/backup_service.dart';
 import '../../data/local/program_repository.dart';
 import '../../data/local/workout_repository.dart';
 import '../../shared/widgets/app_card.dart';
@@ -31,6 +35,68 @@ class SettingsScreen extends ConsumerWidget {
     );
 
     return confirmed ?? false;
+  }
+
+  Future<void> _exportBackup(BuildContext context) async {
+    try {
+      await BackupService().exportBackup();
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Couldn't create backup: $e")),
+      );
+    }
+  }
+
+  Future<void> _importBackup(
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
+    final confirmed = await _confirm(
+      context,
+      title: "Restore from Backup",
+      message:
+          "This replaces all workouts, programs, custom exercises, and your "
+          "profile with the contents of the backup file. This cannot be "
+          "undone.",
+    );
+
+    if (!confirmed) return;
+    if (!context.mounted) return;
+
+    final picked = await FilePicker.pickFile(
+      dialogTitle: "Select a Muscle Up backup",
+      type: FileType.custom,
+      allowedExtensions: ["json"],
+    );
+
+    final path = picked?.path;
+    if (path == null) return;
+
+    try {
+      final jsonString = await File(path).readAsString();
+      await BackupService().restoreFromJson(jsonString);
+
+      ref.invalidate(dashboardProvider);
+      ref.invalidate(progressDataProvider);
+      ref.invalidate(activeProgramProvider);
+
+      if (!context.mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Backup restored")),
+      );
+    } on BackupImportException catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message)),
+      );
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Couldn't read that file: $e")),
+      );
+    }
   }
 
   Future<void> _clearHistory(
@@ -136,6 +202,40 @@ class SettingsScreen extends ConsumerWidget {
               },
               icon: const Icon(Icons.logout),
               label: const Text("Sign Out"),
+            ),
+
+            const SizedBox(height: AppSpacing.xl),
+
+            const SectionHeader(title: "Backup"),
+
+            AppCard(
+              padding: EdgeInsets.zero,
+              child: Material(
+                color: Colors.transparent,
+                borderRadius: AppRadius.large,
+                clipBehavior: Clip.antiAlias,
+                child: Column(
+                  children: [
+                    ListTile(
+                      leading: const Icon(Icons.ios_share),
+                      title: const Text("Export Backup"),
+                      subtitle: const Text(
+                        "Save your workouts, programs, and profile to a file",
+                      ),
+                      onTap: () => _exportBackup(context),
+                    ),
+
+                    const Divider(height: 1),
+
+                    ListTile(
+                      leading: const Icon(Icons.settings_backup_restore),
+                      title: const Text("Restore from Backup"),
+                      subtitle: const Text("Replaces all current app data"),
+                      onTap: () => _importBackup(context, ref),
+                    ),
+                  ],
+                ),
+              ),
             ),
 
             const SizedBox(height: AppSpacing.xl),
