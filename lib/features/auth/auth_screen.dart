@@ -1,5 +1,7 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
@@ -8,6 +10,8 @@ import '../../shared/widgets/primary_button.dart';
 import 'providers/auth_provider.dart';
 
 enum _AuthMode { signUp, logIn }
+
+const _privacyPolicyUrl = 'https://muscleup-aydinmamedov.web.app/privacy-policy.html';
 
 /// The app's entry point when signed out. Leads with account creation (a
 /// new install is, by definition, a new user — not someone "coming back"),
@@ -25,6 +29,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final passwordFocus = FocusNode();
+  final privacyPolicyTap = TapGestureRecognizer();
 
   _AuthMode mode = _AuthMode.signUp;
   bool obscurePassword = true;
@@ -33,11 +38,23 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   String? errorMessage;
 
   @override
+  void initState() {
+    super.initState();
+    privacyPolicyTap.onTap = () {
+      launchUrl(
+        Uri.parse(_privacyPolicyUrl),
+        mode: LaunchMode.externalApplication,
+      );
+    };
+  }
+
+  @override
   void dispose() {
     nameController.dispose();
     emailController.dispose();
     passwordController.dispose();
     passwordFocus.dispose();
+    privacyPolicyTap.dispose();
     super.dispose();
   }
 
@@ -208,6 +225,29 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       fontSize: 12,
                     ),
+                  ),
+
+                  const SizedBox(height: AppSpacing.lg),
+
+                  Text.rich(
+                    TextSpan(
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontSize: 12,
+                      ),
+                      children: [
+                        const TextSpan(text: "By continuing, you agree to our "),
+                        TextSpan(
+                          text: "Privacy Policy",
+                          style: const TextStyle(
+                            color: AppTheme.primary,
+                            decoration: TextDecoration.underline,
+                          ),
+                          recognizer: privacyPolicyTap,
+                        ),
+                        const TextSpan(text: "."),
+                      ],
+                    ),
+                    textAlign: TextAlign.center,
                   ),
                 ],
               ),

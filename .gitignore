@@ -76,3 +76,6 @@ app.*.map.json
 
 # Claude Code local tooling config
 .claude/
+
+# Firebase CLI local deploy cache
+.firebase/

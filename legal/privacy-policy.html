@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Privacy Policy — Muscle Up</title>
+<style>
+  :root {
+    --bg: #101010;
+    --surface: #17171a;
+    --text: #f4f4f4;
+    --text-muted: #a3a0a5;
+    --text-faint: #726f75;
+    --accent: #ff4438;
+    --accent-tint: #3a1412;
+    --border: rgba(255,255,255,0.12);
+    --rule: rgba(255,255,255,0.08);
+  }
+
+  :root[data-theme="light"] {
+    --bg: #faf9f7;
+    --surface: #ffffff;
+    --text: #17151a;
+    --text-muted: #5c5862;
+    --text-faint: #8a8590;
+    --accent: #e0392e;
+    --accent-tint: #fdece9;
+    --border: rgba(20,15,20,0.12);
+    --rule: rgba(20,15,20,0.08);
+  }
+
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #faf9f7;
+      --surface: #ffffff;
+      --text: #17151a;
+      --text-muted: #5c5862;
+      --text-faint: #8a8590;
+      --accent: #e0392e;
+      --accent-tint: #fdece9;
+      --border: rgba(20,15,20,0.12);
+      --rule: rgba(20,15,20,0.08);
+    }
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.6;
+  }
+
+  .page {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 64px 24px 96px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 56px;
+  }
+
+  .brand-mark {
+    width: 30px;
+    height: 30px;
+    flex: none;
+  }
+
+  .brand-word {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  h1 {
+    font-size: clamp(32px, 5.5vw, 44px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.08;
+    margin: 0 0 14px;
+    text-wrap: balance;
+  }
+
+  .updated {
+    font-size: 14px;
+    color: var(--text-faint);
+    margin: 0 0 40px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .lede {
+    font-size: 18px;
+    color: var(--text-muted);
+    max-width: 62ch;
+    margin: 0 0 48px;
+  }
+
+  .lede strong { color: var(--text); font-weight: 600; }
+
+  section {
+    margin-top: 44px;
+    padding-top: 44px;
+    border-top: 1px solid var(--rule);
+  }
+
+  section:first-of-type {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+  }
+
+  h2 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin: 0 0 16px;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+
+  h2 .accent-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex: none;
+    transform: translateY(-2px);
+  }
+
+  p {
+    max-width: 65ch;
+    margin: 0 0 16px;
+    color: var(--text);
+    font-size: 16px;
+  }
+
+  p.muted { color: var(--text-muted); }
+
+  p:last-child { margin-bottom: 0; }
+
+  strong { font-weight: 650; color: var(--text); }
+
+  a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--accent) 40%, transparent);
+    text-underline-offset: 2px;
+  }
+  a:hover { text-decoration-color: var(--accent); }
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 22px;
+    margin: 20px 0;
+  }
+
+  .card p:last-child { margin-bottom: 0; }
+
+  .data-grid {
+    display: grid;
+    gap: 14px;
+    margin: 20px 0;
+  }
+
+  .data-row {
+    display: grid;
+    grid-template-columns: 168px 1fr;
+    gap: 16px;
+    padding: 16px 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+
+  .data-row dt {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--accent);
+    align-self: start;
+  }
+
+  .data-row dd {
+    margin: 0;
+    font-size: 15px;
+    color: var(--text-muted);
+  }
+
+  .not-collected {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 20px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .not-collected li {
+    font-size: 13px;
+    color: var(--text-faint);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 6px 13px;
+  }
+
+  .not-collected li::before {
+    content: "— ";
+  }
+
+  footer {
+    margin-top: 64px;
+    padding-top: 32px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  footer p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--text-faint);
+  }
+
+  @media (max-width: 520px) {
+    .data-row { grid-template-columns: 1fr; gap: 4px; }
+    .page { padding: 48px 18px 72px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="brand">
+    <svg class="brand-mark" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Muscle Up logo">
+      <rect width="1024" height="1024" rx="220" fill="var(--accent-tint)"/>
+      <g fill="var(--accent)">
+        <path d="M195 375c0-27.6 22.4-50 50-50s50 22.4 50 50v274c0 27.6-22.4 50-50 50s-50-22.4-50-50V375z"/>
+        <path d="M290 405c0-27.6 22.4-50 50-50s50 22.4 50 50v214c0 27.6-22.4 50-50 50s-50-22.4-50-50V405z"/>
+        <path d="M634 405c0-27.6 22.4-50 50-50s50 22.4 50 50v214c0 27.6-22.4 50-50 50s-50-22.4-50-50V405z"/>
+        <path d="M729 375c0-27.6 22.4-50 50-50s50 22.4 50 50v274c0 27.6-22.4 50-50 50s-50-22.4-50-50V375z"/>
+        <rect x="340" y="480" width="344" height="64" rx="20"/>
+        <rect x="460" y="452" width="104" height="120" rx="24"/>
+      </g>
+    </svg>
+    <span class="brand-word">Muscle Up</span>
+  </div>
+
+  <h1>Privacy Policy</h1>
+  <p class="updated">Last updated August 28, 2026</p>
+
+  <p class="lede">
+    Muscle Up is built to work almost entirely on your phone. This page
+    explains, plainly, the handful of places your information does
+    leave the device — and the much longer list of places it doesn't.
+  </p>
+
+  <section>
+    <h2><span class="accent-dot"></span>What we collect</h2>
+    <p class="muted">
+      Four categories of information touch our systems (Firebase) or
+      Google's AI service. Everything else about your training lives
+      only on your device.
+    </p>
+
+    <dl class="data-grid">
+      <div class="data-row">
+        <dt>Account</dt>
+        <dd>Your email address and password, handled by Firebase
+          Authentication so you can sign in — or, if you use the app as
+          a guest, an anonymous Firebase identifier with no personal
+          information attached. We never see your password in plain
+          text.</dd>
+      </div>
+      <div class="data-row">
+        <dt>Profile</dt>
+        <dd>Age, weight, height, experience level, and weekly goal,
+          entered during onboarding. Stored on your device to
+          personalize the app.</dd>
+      </div>
+      <div class="data-row">
+        <dt>Workout history</dt>
+        <dd>Programs, exercises, sets, reps, weights, and completed
+          workouts — stored locally on your device only. Nothing here
+          is uploaded or synced, unless you use the AI Coach below.</dd>
+      </div>
+      <div class="data-row">
+        <dt>AI Coach chats</dt>
+        <dd>What you type to the Coach, plus context to make its advice
+          relevant — your name, active program, exercise list, workout
+          count, most recent workout, and profile details — is sent to
+          Google's Gemini model to generate a reply.</dd>
+      </div>
+    </dl>
+  </section>
+
+  <section>
+    <h2><span class="accent-dot"></span>How the AI Coach works</h2>
+    <p>
+      Every message you send to the in-app Coach is processed by
+      Google's Firebase AI (Gemini) service, subject to
+      <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google's Privacy Policy</a>
+      and the
+      <a href="https://ai.google.dev/gemini-api/terms" target="_blank" rel="noopener">Gemini API terms</a>.
+      We don't store your conversations on our own servers, and we
+      don't use them for anything beyond generating that one reply.
+    </p>
+  </section>
+
+  <section>
+    <h2><span class="accent-dot"></span>Guest mode</h2>
+    <p>
+      Using the app as a guest creates an anonymous Firebase account
+      with no email, password, or personal information attached — it
+      exists only to let the app function. Your workout data stays on
+      your device exactly as it would with a full account, but it is
+      tied to this device only: uninstalling the app or losing the
+      device means losing that data, since there is no account to
+      recover it from. Creating a full account at any time attaches
+      your email/password to that same identifier without moving or
+      duplicating any data.
+    </p>
+  </section>
+
+  <section>
+    <h2><span class="accent-dot"></span>What we don't collect</h2>
+    <p class="muted">No hidden categories, no advertising SDKs, no analytics tracking you across apps.</p>
+    <ul class="not-collected">
+      <li>Location</li>
+      <li>Contacts</li>
+      <li>Photos or camera</li>
+      <li>Advertising identifiers</li>
+      <li>Analytics or crash tracking</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2><span class="accent-dot"></span>Retention &amp; deletion</h2>
+    <p>
+      Delete your workout and program data anytime from
+      <strong>Settings → Data</strong> — Clear Workout History or Delete
+      All Programs — or by uninstalling the app. To delete your account
+      and email record entirely, contact us below.
+    </p>
+  </section>
+
+  <section>
+    <h2><span class="accent-dot"></span>Children's privacy</h2>
+    <p>
+      Muscle Up isn't directed at children under 13, and we don't
+      knowingly collect information from anyone under 13.
+    </p>
+  </section>
+
+  <section>
+    <h2><span class="accent-dot"></span>Changes to this policy</h2>
+    <p>
+      If this policy changes, we'll update it here and revise the date
+      at the top.
+    </p>
+  </section>
+
+  <footer>
+    <p>Muscle Up — built by Aydin Mammadov</p>
+    <p><a href="mailto:aydinmamedov004@gmail.com">aydinmamedov004@gmail.com</a></p>
+  </footer>
+</div>
+
+</body>
+</html>
