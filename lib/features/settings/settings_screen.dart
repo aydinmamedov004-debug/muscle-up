@@ -14,6 +14,7 @@ import '../../shared/widgets/app_card.dart';
 import '../../shared/widgets/confirmation_dialog.dart';
 import '../../shared/widgets/section_header.dart';
 import '../auth/providers/auth_provider.dart';
+import '../auth/upgrade_account_screen.dart';
 import '../home/providers/dashboard_provider.dart';
 import '../programs/providers/active_program_provider.dart';
 import '../progress/providers/progress_provider.dart';
@@ -150,9 +151,23 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
+  Future<void> _upgradeAccount(BuildContext context) async {
+    final created = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(builder: (_) => const UpgradeAccountScreen()),
+    );
+
+    if (created == true && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Account created — your progress is saved")),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(authStateProvider).value;
+    final isGuest = ref.watch(isGuestProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -167,8 +182,8 @@ class SettingsScreen extends ConsumerWidget {
             AppCard(
               child: Row(
                 children: [
-                  const CircleAvatar(
-                    child: Icon(Icons.person),
+                  CircleAvatar(
+                    child: Icon(isGuest ? Icons.person_outline : Icons.person),
                   ),
 
                   const SizedBox(width: AppSpacing.md),
@@ -178,13 +193,15 @@ class SettingsScreen extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          user?.displayName ?? "Signed in",
+                          isGuest ? "Guest" : (user?.displayName ?? "Signed in"),
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         Text(
-                          user?.email ?? "",
+                          isGuest
+                              ? "Progress is saved on this device only"
+                              : (user?.email ?? ""),
                           style: const TextStyle(color: AppTheme.secondaryText),
                         ),
                       ],
@@ -195,6 +212,16 @@ class SettingsScreen extends ConsumerWidget {
             ),
 
             const SizedBox(height: AppSpacing.md),
+
+            if (isGuest) ...[
+              FilledButton.icon(
+                onPressed: () => _upgradeAccount(context),
+                icon: const Icon(Icons.person_add_alt),
+                label: const Text("Create Account"),
+              ),
+
+              const SizedBox(height: AppSpacing.sm),
+            ],
 
             OutlinedButton.icon(
               onPressed: () {

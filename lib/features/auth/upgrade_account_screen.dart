@@ -6,18 +6,23 @@ import '../../core/theme/app_theme.dart';
 import '../../shared/widgets/primary_button.dart';
 import 'providers/auth_provider.dart';
 
-class SignUpScreen extends ConsumerStatefulWidget {
-  const SignUpScreen({super.key});
+/// Converts a guest (anonymous) session into a real account, in place —
+/// the Firebase UID doesn't change, so none of the guest's local data
+/// (workouts, programs, profile) needs to move.
+class UpgradeAccountScreen extends ConsumerStatefulWidget {
+  const UpgradeAccountScreen({super.key});
 
   @override
-  ConsumerState<SignUpScreen> createState() => _SignUpScreenState();
+  ConsumerState<UpgradeAccountScreen> createState() =>
+      _UpgradeAccountScreenState();
 }
 
-class _SignUpScreenState extends ConsumerState<SignUpScreen> {
+class _UpgradeAccountScreenState extends ConsumerState<UpgradeAccountScreen> {
   final nameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
+  bool obscurePassword = true;
   bool isLoading = false;
   String? errorMessage;
 
@@ -29,7 +34,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
     super.dispose();
   }
 
-  Future<void> _signUp() async {
+  Future<void> _upgrade() async {
     final name = nameController.text.trim();
     final email = emailController.text.trim();
     final password = passwordController.text;
@@ -45,18 +50,13 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
     });
 
     try {
-      await ref.read(authControllerProvider).signUp(
-            name: name,
-            email: email,
-            password: password,
-          );
+      await ref.read(authControllerProvider).upgradeGuestAccount(
+        name: name,
+        email: email,
+        password: password,
+      );
 
-      // SignUpScreen was pushed on top of the sign-in route, so a
-      // successful sign-in alone won't reveal AuthGate's now-signed-in
-      // content underneath — pop back to it explicitly.
-      if (mounted) {
-        Navigator.of(context).popUntil((route) => route.isFirst);
-      }
+      if (mounted) Navigator.of(context).pop(true);
     } on AuthException catch (e) {
       setState(() => errorMessage = e.message);
     } finally {
@@ -75,9 +75,18 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                Text(
+                  "Your workouts, programs, and progress stay exactly as "
+                  "they are — this just makes sure you never lose them.",
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+
+                const SizedBox(height: AppSpacing.xl),
+
                 TextField(
                   controller: nameController,
                   textCapitalization: TextCapitalization.words,
+                  textInputAction: TextInputAction.next,
                   decoration: const InputDecoration(labelText: "Name"),
                 ),
 
@@ -86,6 +95,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                 TextField(
                   controller: emailController,
                   keyboardType: TextInputType.emailAddress,
+                  textInputAction: TextInputAction.next,
                   decoration: const InputDecoration(labelText: "Email"),
                 ),
 
@@ -93,8 +103,23 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
 
                 TextField(
                   controller: passwordController,
-                  obscureText: true,
-                  decoration: const InputDecoration(labelText: "Password"),
+                  obscureText: obscurePassword,
+                  textInputAction: TextInputAction.done,
+                  onSubmitted: (_) => _upgrade(),
+                  decoration: InputDecoration(
+                    labelText: "Password",
+                    helperText: "6+ characters",
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        obscurePassword
+                            ? Icons.visibility_outlined
+                            : Icons.visibility_off_outlined,
+                      ),
+                      onPressed: () => setState(
+                        () => obscurePassword = !obscurePassword,
+                      ),
+                    ),
+                  ),
                 ),
 
                 if (errorMessage != null) ...[
@@ -110,7 +135,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                 PrimaryButton(
                   text: "CREATE ACCOUNT",
                   isLoading: isLoading,
-                  onPressed: _signUp,
+                  onPressed: isLoading ? null : _upgrade,
                 ),
               ],
             ),

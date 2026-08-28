@@ -4,8 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app/app_shell.dart';
 import '../../data/local/profile_provider.dart';
 import '../onboarding/onboarding_screen.dart';
+import 'auth_screen.dart';
 import 'providers/auth_provider.dart';
-import 'sign_in_screen.dart';
 
 /// Shows the sign-in flow when signed out, the onboarding questionnaire when
 /// signed in but without a saved profile yet, the app once both are done,
@@ -19,7 +19,7 @@ class AuthGate extends ConsumerWidget {
 
     return authState.when(
       data: (user) {
-        if (user == null) return const SignInScreen();
+        if (user == null) return const AuthScreen();
 
         final profile = ref.watch(profileProvider);
         return profile == null ? const OnboardingScreen() : const AppShell();
