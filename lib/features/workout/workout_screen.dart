@@ -16,6 +16,7 @@ import '../streak_celebration/streak_celebration_screen.dart';
 import '../workout/providers/workout_provider.dart';
 import '../workout_summary/workout_summary_screen.dart';
 import 'widgets/exercise_card.dart';
+import '../../data/achievement_repository.dart';
 import '../../data/local/profile_provider.dart';
 import '../../data/local/workout_repository.dart';
 import '../../data/mappers/workout_mapper.dart';
@@ -29,6 +30,7 @@ class WorkoutScreen extends ConsumerStatefulWidget {
 
 class _WorkoutScreenState extends ConsumerState<WorkoutScreen> {
   final WorkoutRepository repository = WorkoutRepository();
+  final AchievementRepository achievementRepository = AchievementRepository();
   late Timer timer;
   bool isFinishing = false;
 
@@ -78,6 +80,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> {
       final weeklyGoal = ref.read(profileProvider)!.weeklyGoal;
       final beforeStats = repository.getDashboardStats(weeklyGoal: weeklyGoal);
       final beforeWeekDone = repository.getCurrentWeekCompletionFlags();
+      final beforeAchievements = achievementRepository.getStatuses(
+        weeklyGoal: weeklyGoal,
+      );
 
       ref.read(workoutSessionProvider.notifier).finishWorkout();
 
@@ -89,12 +94,19 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> {
 
       final afterStats = repository.getDashboardStats(weeklyGoal: weeklyGoal);
       final afterWeekDone = repository.getCurrentWeekCompletionFlags();
+      final afterAchievements = achievementRepository.getStatuses(
+        weeklyGoal: weeklyGoal,
+      );
 
       final summary = WorkoutSummaryData(
         duration: formatDuration(session.duration),
         totalExercises: session.exercises.length,
         completedSets: completedSets,
         totalSets: totalSets,
+        newlyUnlocked: achievementRepository.newlyUnlocked(
+          before: beforeAchievements,
+          after: afterAchievements,
+        ),
       );
 
       if (afterStats.currentStreak != beforeStats.currentStreak) {

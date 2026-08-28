@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_theme.dart';
+import '../../models/achievement.dart';
 import '../../shared/widgets/primary_button.dart';
 
 /// Bundles the stats a finished workout hands off to [WorkoutSummaryScreen]
@@ -11,12 +12,14 @@ class WorkoutSummaryData {
   final int totalExercises;
   final int completedSets;
   final int totalSets;
+  final List<Achievement> newlyUnlocked;
 
   const WorkoutSummaryData({
     required this.duration,
     required this.totalExercises,
     required this.completedSets,
     required this.totalSets,
+    this.newlyUnlocked = const [],
   });
 }
 
@@ -83,6 +86,53 @@ class WorkoutSummaryScreen extends StatelessWidget {
               stat("Exercises", "${summary.totalExercises}"),
               stat("Sets", "$completedSets / $totalSets"),
               stat("Completion", "$completion%"),
+
+              if (summary.newlyUnlocked.isNotEmpty) ...[
+                const SizedBox(height: 20),
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: AppTheme.accentTint,
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "🏅 Achievement Unlocked",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.accentSoft,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      for (final achievement in summary.newlyUnlocked)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 4),
+                          child: Row(
+                            children: [
+                              Icon(
+                                achievement.icon,
+                                size: 18,
+                                color: AppTheme.accentSoft,
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  achievement.title,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ],
+
               const Spacer(),
               PrimaryButton(
                 text: "Done",

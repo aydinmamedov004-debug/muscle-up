@@ -7,6 +7,8 @@ import '../../shared/widgets/app_card.dart';
 import '../../shared/widgets/empty_state.dart';
 import '../../shared/widgets/section_header.dart';
 import '../../shared/widgets/stat_tile.dart';
+import '../achievements/achievements_screen.dart';
+import '../achievements/providers/achievement_provider.dart';
 import 'providers/progress_provider.dart';
 import 'widgets/weight_chart.dart';
 
@@ -31,6 +33,9 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
   @override
   Widget build(BuildContext context) {
     final data = ref.watch(progressDataProvider);
+    final achievementStatuses = ref.watch(achievementStatusesProvider);
+    final unlockedCount =
+        achievementStatuses.where((status) => status.isUnlocked).length;
     final exerciseNames =
         data.exerciseRecords.map((record) => record.exerciseName).toList();
 
@@ -60,6 +65,22 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
                   icon: Icons.timer_outlined,
                   value: _formatTrainingTime(data.totalTrainingTime),
                   label: "Training",
+                ),
+
+                const SizedBox(width: AppSpacing.sm),
+
+                StatTile(
+                  icon: Icons.emoji_events_outlined,
+                  value: "$unlockedCount/${achievementStatuses.length}",
+                  label: "Achievements",
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const AchievementsScreen(),
+                      ),
+                    );
+                  },
                 ),
               ],
             ),

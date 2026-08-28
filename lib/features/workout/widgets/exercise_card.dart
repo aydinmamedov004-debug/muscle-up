@@ -103,13 +103,23 @@ class ExerciseCard extends ConsumerWidget {
 
                       const SizedBox(height: 2),
 
-                      Text(
-                        "🏆 Best: ${progress.personalBestWeight ?? "-"} kg × ${progress.personalBestReps ?? "-"} reps",
-                        style: const TextStyle(
-                          color: Colors.amber,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                        ),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.emoji_events,
+                            size: 14,
+                            color: Colors.amber,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            "Best: ${progress.personalBestWeight ?? "-"} kg × ${progress.personalBestReps ?? "-"} reps",
+                            style: const TextStyle(
+                              color: Colors.amber,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
                       ),
 
                       const SizedBox(height: 6),
