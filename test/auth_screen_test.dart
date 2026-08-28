@@ -16,6 +16,11 @@ void main() {
     );
   }
 
+  final passwordFieldFinder = find.ancestor(
+    of: find.text("Password"),
+    matching: find.byType(TextField),
+  );
+
   testWidgets('defaults to Create Account, not a returning-user greeting', (
     tester,
   ) async {
@@ -31,7 +36,7 @@ void main() {
     await pumpAuthScreen(tester);
 
     await tester.tap(find.text("Log In"));
-    await tester.pump();
+    await tester.pumpAndSettle();
 
     expect(find.text("LOG IN"), findsOneWidget);
     expect(find.text("Name"), findsNothing);
@@ -40,21 +45,28 @@ void main() {
     expect(find.text("Password"), findsOneWidget);
   });
 
-  testWidgets('password visibility toggle flips obscureText', (tester) async {
-    await pumpAuthScreen(tester);
+  testWidgets(
+    'password visibility toggle and hint only appear once the field is focused',
+    (tester) async {
+      await pumpAuthScreen(tester);
 
-    TextField passwordField() => tester.widget<TextField>(
-      find.ancestor(
-        of: find.text("Password"),
-        matching: find.byType(TextField),
-      ),
-    );
+      TextField passwordField() =>
+          tester.widget<TextField>(passwordFieldFinder);
 
-    expect(passwordField().obscureText, isTrue);
+      expect(passwordField().obscureText, isTrue);
+      expect(find.byIcon(Icons.visibility_outlined), findsNothing);
+      expect(find.text("6+ characters"), findsNothing);
 
-    await tester.tap(find.byIcon(Icons.visibility_outlined));
-    await tester.pump();
+      await tester.tap(passwordFieldFinder);
+      await tester.pumpAndSettle();
 
-    expect(passwordField().obscureText, isFalse);
-  });
+      expect(find.byIcon(Icons.visibility_outlined), findsOneWidget);
+      expect(find.text("6+ characters"), findsOneWidget);
+
+      await tester.tap(find.byIcon(Icons.visibility_outlined));
+      await tester.pumpAndSettle();
+
+      expect(passwordField().obscureText, isFalse);
+    },
+  );
 }

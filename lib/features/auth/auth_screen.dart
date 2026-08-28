@@ -46,13 +46,20 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
         mode: LaunchMode.externalApplication,
       );
     };
+    // The visibility toggle and "6+ characters" hint only make sense while
+    // the user is actually in the password field — surface them on focus
+    // rather than cluttering the form before it's relevant.
+    passwordFocus.addListener(_onPasswordFocusChange);
   }
+
+  void _onPasswordFocusChange() => setState(() {});
 
   @override
   void dispose() {
     nameController.dispose();
     emailController.dispose();
     passwordController.dispose();
+    passwordFocus.removeListener(_onPasswordFocusChange);
     passwordFocus.dispose();
     privacyPolicyTap.dispose();
     super.dispose();
@@ -145,15 +152,34 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
 
                   const SizedBox(height: AppSpacing.lg),
 
-                  if (isSignUp) ...[
-                    TextField(
-                      controller: nameController,
-                      textCapitalization: TextCapitalization.words,
-                      textInputAction: TextInputAction.next,
-                      decoration: const InputDecoration(labelText: "Name"),
+                  AnimatedSize(
+                    duration: const Duration(milliseconds: 220),
+                    curve: Curves.easeOutCubic,
+                    alignment: Alignment.topCenter,
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 160),
+                      child: isSignUp
+                          ? Column(
+                              key: const ValueKey("name-field"),
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                TextField(
+                                  controller: nameController,
+                                  textCapitalization: TextCapitalization.words,
+                                  textInputAction: TextInputAction.next,
+                                  decoration: const InputDecoration(
+                                    labelText: "Name",
+                                  ),
+                                ),
+                                const SizedBox(height: AppSpacing.md),
+                              ],
+                            )
+                          : const SizedBox(
+                              key: ValueKey("no-name-field"),
+                              width: double.infinity,
+                            ),
                     ),
-                    const SizedBox(height: AppSpacing.md),
-                  ],
+                  ),
 
                   TextField(
                     controller: emailController,
@@ -173,16 +199,26 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                     onSubmitted: (_) => _submit(),
                     decoration: InputDecoration(
                       labelText: "Password",
-                      helperText: isSignUp ? "6+ characters" : null,
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          obscurePassword
-                              ? Icons.visibility_outlined
-                              : Icons.visibility_off_outlined,
-                        ),
-                        onPressed: () => setState(
-                          () => obscurePassword = !obscurePassword,
-                        ),
+                      helperText: (passwordFocus.hasFocus && isSignUp)
+                          ? "6+ characters"
+                          : null,
+                      suffixIcon: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 160),
+                        child: passwordFocus.hasFocus
+                            ? IconButton(
+                                key: const ValueKey("password-visibility"),
+                                icon: Icon(
+                                  obscurePassword
+                                      ? Icons.visibility_outlined
+                                      : Icons.visibility_off_outlined,
+                                ),
+                                onPressed: () => setState(
+                                  () => obscurePassword = !obscurePassword,
+                                ),
+                              )
+                            : const SizedBox.shrink(
+                                key: ValueKey("password-visibility-hidden"),
+                              ),
                       ),
                     ),
                   ),
@@ -197,10 +233,14 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
 
                   const SizedBox(height: AppSpacing.xl),
 
-                  PrimaryButton(
-                    text: isSignUp ? "CREATE ACCOUNT" : "LOG IN",
-                    isLoading: isLoading,
-                    onPressed: busy ? null : _submit,
+                  AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 200),
+                    child: PrimaryButton(
+                      key: ValueKey(mode),
+                      text: isSignUp ? "CREATE ACCOUNT" : "LOG IN",
+                      isLoading: isLoading,
+                      onPressed: busy ? null : _submit,
+                    ),
                   ),
 
                   const SizedBox(height: AppSpacing.md),
@@ -267,31 +307,59 @@ class _ModeToggle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isSignUp = mode == _AuthMode.signUp;
+
     return Container(
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
         color: AppTheme.surfaceLight,
         borderRadius: AppRadius.pill,
       ),
-      child: Row(
+      child: Stack(
         children: [
-          Expanded(
-            child: _ModeToggleSegment(
-              label: "Create Account",
-              selected: mode == _AuthMode.signUp,
-              onTap: onChanged == null
-                  ? null
-                  : () => onChanged!(_AuthMode.signUp),
+          // Sliding highlight, painted behind the labels — animates between
+          // the two halves instead of the old instant color-swap.
+          Positioned.fill(
+            child: AnimatedAlign(
+              duration: const Duration(milliseconds: 220),
+              curve: Curves.easeOutCubic,
+              alignment: isSignUp
+                  ? Alignment.centerLeft
+                  : Alignment.centerRight,
+              child: FractionallySizedBox(
+                widthFactor: 0.5,
+                heightFactor: 1,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: AppTheme.primary,
+                    borderRadius: AppRadius.pill,
+                  ),
+                ),
+              ),
             ),
           ),
-          Expanded(
-            child: _ModeToggleSegment(
-              label: "Log In",
-              selected: mode == _AuthMode.logIn,
-              onTap: onChanged == null
-                  ? null
-                  : () => onChanged!(_AuthMode.logIn),
-            ),
+
+          Row(
+            children: [
+              Expanded(
+                child: _ModeToggleSegment(
+                  label: "Create Account",
+                  selected: isSignUp,
+                  onTap: onChanged == null
+                      ? null
+                      : () => onChanged!(_AuthMode.signUp),
+                ),
+              ),
+              Expanded(
+                child: _ModeToggleSegment(
+                  label: "Log In",
+                  selected: !isSignUp,
+                  onTap: onChanged == null
+                      ? null
+                      : () => onChanged!(_AuthMode.logIn),
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -313,21 +381,21 @@ class _ModeToggleSegment extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: selected ? AppTheme.primary : Colors.transparent,
-      borderRadius: AppRadius.pill,
+      color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
         borderRadius: AppRadius.pill,
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 10),
-          child: Text(
-            label,
-            textAlign: TextAlign.center,
+          child: AnimatedDefaultTextStyle(
+            duration: const Duration(milliseconds: 220),
+            curve: Curves.easeOutCubic,
             style: TextStyle(
               fontWeight: FontWeight.w600,
               fontSize: 14,
               color: selected ? Colors.white : AppTheme.secondaryText,
             ),
+            child: Text(label, textAlign: TextAlign.center),
           ),
         ),
       ),
