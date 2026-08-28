@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/theme/app_spacing.dart';
 import '../../data/local/program_repository.dart';
 import '../../models/storage/stored_workout_program.dart';
 import '../../shared/widgets/empty_state.dart';
 import 'create_program_flow.dart';
+import 'edit_program_screen.dart';
+import 'generate_program_screen.dart';
 import 'providers/active_program_provider.dart';
 import 'widgets/program_card.dart';
-import 'edit_program_screen.dart';
 
 class ProgramListScreen extends ConsumerStatefulWidget {
   const ProgramListScreen({super.key});
@@ -21,6 +23,15 @@ class _ProgramListScreenState
     extends ConsumerState<ProgramListScreen> {
   final repository = ProgramRepository();
 
+  Future<void> _openGenerator() async {
+    final created = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(builder: (_) => const GenerateProgramScreen()),
+    );
+
+    if (created == true) setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     final List<StoredWorkoutProgram> programs =
@@ -30,6 +41,13 @@ class _ProgramListScreenState
     return Scaffold(
       appBar: AppBar(
         title: const Text("Workout Programs"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.auto_awesome),
+            tooltip: "Generate with AI",
+            onPressed: _openGenerator,
+          ),
+        ],
       ),
 
       floatingActionButton: FloatingActionButton(
@@ -44,11 +62,28 @@ class _ProgramListScreenState
       ),
 
       body: programs.isEmpty
-          ? const EmptyState(
-              icon: Icons.fitness_center,
-              title: "No Programs",
-              subtitle:
-                  "Create your first workout program.",
+          ? Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                EmptyState(
+                  icon: Icons.auto_awesome,
+                  title: "No Programs Yet",
+                  subtitle:
+                      "Let your coach build a starter program from your "
+                      "profile, or create one yourself.",
+                  buttonText: "Generate with AI",
+                  onPressed: _openGenerator,
+                ),
+                TextButton(
+                  onPressed: () async {
+                    final program = await runCreateProgramFlow(context);
+                    if (program == null) return;
+                    setState(() {});
+                  },
+                  child: const Text("Create manually"),
+                ),
+                const SizedBox(height: AppSpacing.lg),
+              ],
             )
           : ListView.builder(
               padding: const EdgeInsets.all(16),

@@ -7,7 +7,6 @@ import '../../core/theme/app_theme.dart';
 import '../../shared/widgets/primary_button.dart';
 import '../../shared/widgets/stat_tile.dart';
 import '../auth/providers/auth_provider.dart';
-import '../programs/create_program_flow.dart';
 import '../programs/program_list_screen.dart';
 import 'providers/dashboard_provider.dart';
 import '../programs/providers/active_program_provider.dart';
@@ -46,13 +45,21 @@ class HomeScreen extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref,
   ) async {
-    final program = await runCreateProgramFlow(context);
-
-    if (program == null) return;
+    // Route through the programs screen rather than straight into the
+    // manual exercise-picker — that's where the AI-generated starter
+    // program lives, and a brand-new user is exactly who that's for.
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const ProgramListScreen()),
+    );
 
     ref.invalidate(activeProgramProvider);
 
     if (!context.mounted) return;
+
+    // ActiveProgramNotifier defaults to the first program once any exist,
+    // so this is non-null as soon as one was created — via either path.
+    if (ref.read(activeProgramProvider) == null) return;
 
     ref.read(workoutSessionProvider.notifier).beginSession();
     ref.read(navigationProvider.notifier).goTo(1);

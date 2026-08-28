@@ -10,7 +10,7 @@ import '../../models/workout_session.dart';
 import '../../shared/navigation/slide_page_route.dart';
 import '../../shared/widgets/empty_state.dart';
 import '../../shared/widgets/primary_button.dart';
-import '../programs/create_program_flow.dart';
+import '../programs/program_list_screen.dart';
 import '../programs/providers/active_program_provider.dart';
 import '../streak_celebration/streak_celebration_screen.dart';
 import '../workout/providers/workout_provider.dart';
@@ -171,9 +171,14 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> {
                     .read(workoutSessionProvider.notifier)
                     .beginSession()
                 : () async {
-                    final program = await runCreateProgramFlow(context);
-
-                    if (program == null) return;
+                    // Route through the programs screen (AI-generated or
+                    // manual) rather than straight into the manual picker.
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const ProgramListScreen(),
+                      ),
+                    );
 
                     ref.invalidate(activeProgramProvider);
                   },
