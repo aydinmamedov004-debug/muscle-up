@@ -5,6 +5,7 @@ import '../../data/exercise_catalog.dart';
 import '../../data/local/custom_exercise_repository.dart';
 import '../../data/muscle_group.dart';
 import '../../models/storage/custom_exercise.dart';
+import 'exercise_detail_screen.dart';
 import 'widgets/create_exercise_dialog.dart';
 
 class ExerciseLibraryScreen extends StatefulWidget {
@@ -189,12 +190,31 @@ class _ExerciseLibraryScreenState extends State<ExerciseLibraryScreen> {
                               ),
                         title: Text(exercise.name),
                         subtitle: Text(exercise.group.label),
-                        trailing: Icon(
-                          widget.multiSelect
-                              ? (isSelected
-                                  ? Icons.check_circle
-                                  : Icons.circle_outlined)
-                              : Icons.add,
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.info_outline),
+                              tooltip: "Exercise details",
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => ExerciseDetailScreen(
+                                      exerciseName: exercise.name,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                            Icon(
+                              widget.multiSelect
+                                  ? (isSelected
+                                      ? Icons.check_circle
+                                      : Icons.circle_outlined)
+                                  : Icons.add,
+                            ),
+                          ],
                         ),
                         onTap: () {
                           if (!widget.multiSelect) {

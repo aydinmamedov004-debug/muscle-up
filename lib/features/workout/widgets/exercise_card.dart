@@ -5,6 +5,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../data/exercise_catalog.dart';
 import '../../../models/exercise.dart';
 import '../../../shared/widgets/app_card.dart';
+import '../../exercises/exercise_detail_screen.dart';
 import '../../progress/providers/progress_provider.dart';
 import '../providers/workout_provider.dart';
 import 'set_row.dart';
@@ -122,6 +123,21 @@ class ExerciseCard extends ConsumerWidget {
                     ),
                   ],
                 ),
+              ),
+
+              IconButton(
+                icon: const Icon(Icons.info_outline),
+                tooltip: "Form guidance",
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => ExerciseDetailScreen(
+                        exerciseName: exercise.name,
+                      ),
+                    ),
+                  );
+                },
               ),
             ],
           ),
