@@ -4,6 +4,7 @@ import '../../../models/exercise.dart';
 import '../../../models/workout_day.dart';
 import '../../../models/workout_session.dart';
 import '../../../models/workout_set.dart';
+import '../../exercises/providers/exercise_guidance_service.dart';
 import '../../programs/providers/active_program_provider.dart';
 
 class WorkoutSessionNotifier extends Notifier<WorkoutSession> {
@@ -59,6 +60,29 @@ class WorkoutSessionNotifier extends Notifier<WorkoutSession> {
 
   void beginSession() {
     ref.read(workoutSessionActiveProvider.notifier).state = true;
+    _prewarmGuidance();
+  }
+
+  /// Best-effort background warm-up: quietly generates (or reuses cached)
+  /// form guidance for every exercise in the session's program as soon as
+  /// it starts, so by the time someone actually taps an exercise's info
+  /// icon mid-workout it's usually already there — the AI call that used
+  /// to only happen on that tap (and can take a while) mostly happens
+  /// invisibly beforehand instead. Sequential rather than parallel to stay
+  /// gentle on the API, and failures are swallowed since this is opportunistic
+  /// — the detail screen still generates on demand if this hasn't finished.
+  Future<void> _prewarmGuidance() async {
+    final program = ref.read(activeProgramProvider);
+    if (program == null) return;
+
+    final service = ExerciseGuidanceService();
+    for (final exercise in program.exercises) {
+      try {
+        await service.getGuidance(exercise.name);
+      } catch (_) {
+        // Opportunistic only — ignore and let the detail screen retry.
+      }
+    }
   }
 
   void endSession() {

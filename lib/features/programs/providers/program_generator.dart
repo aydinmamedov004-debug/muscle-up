@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:firebase_ai/firebase_ai.dart';
@@ -40,9 +41,13 @@ class ProgramGenerator {
 
     final GenerateContentResponse response;
     try {
-      response = await model.generateContent([
-        Content.text(_buildPrompt(profile, catalogNames)),
-      ]);
+      response = await model
+          .generateContent([Content.text(_buildPrompt(profile, catalogNames))])
+          .timeout(const Duration(seconds: 45));
+    } on TimeoutException {
+      throw ProgramGenerationException(
+        "That's taking longer than expected. Try again in a moment.",
+      );
     } catch (_) {
       throw ProgramGenerationException(
         "Couldn't reach the coach to generate a program. Check your "

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:firebase_ai/firebase_ai.dart';
@@ -56,9 +57,13 @@ class ExerciseGuidanceService {
 
     final GenerateContentResponse response;
     try {
-      response = await model.generateContent([
-        Content.text(_buildPrompt(exerciseName)),
-      ]);
+      response = await model
+          .generateContent([Content.text(_buildPrompt(exerciseName))])
+          .timeout(const Duration(seconds: 30));
+    } on TimeoutException {
+      throw ExerciseGuidanceException(
+        "That's taking longer than expected. Try again in a moment.",
+      );
     } catch (_) {
       throw ExerciseGuidanceException(
         "Couldn't reach the coach for form guidance. Check your "
