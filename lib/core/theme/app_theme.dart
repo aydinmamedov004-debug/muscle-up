@@ -138,8 +138,14 @@ class AppTheme {
       linearTrackColor: surfaceLight,
     ),
 
+    // Material3's default SnackBar text color assumes the M3 "inverse
+    // surface" convention (light background, dark text) — since backgroundColor
+    // below overrides that to a dark color matching the rest of the app, the
+    // text color needs its own explicit override too, or it renders as
+    // dark-on-dark and is functionally invisible.
     snackBarTheme: SnackBarThemeData(
       backgroundColor: surfaceLight,
+      contentTextStyle: TextStyle(color: text, fontSize: 14),
       behavior: SnackBarBehavior.floating,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
