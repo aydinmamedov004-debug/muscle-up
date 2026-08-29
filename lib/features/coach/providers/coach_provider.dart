@@ -12,6 +12,14 @@ import '../models/chat_message.dart';
 class CoachController extends Notifier<List<ChatMessage>> {
   late final ChatSession _chat;
 
+  /// Indices of coach messages that have already played their typewriter
+  /// reveal in CoachScreen. Lives here — on the controller, not in
+  /// CoachScreen's own State — because this provider isn't autoDispose and
+  /// survives navigating away from and back to the Coach screen within the
+  /// same app session, so a message only ever animates once, not every
+  /// time the screen is reopened.
+  final Set<int> typedMessageIndices = {};
+
   @override
   List<ChatMessage> build() {
     // Read (not watch) — this context should seed the conversation once,

@@ -20,13 +20,6 @@ class _CoachScreenState extends ConsumerState<CoachScreen> {
   final scrollController = ScrollController();
   bool isSending = false;
 
-  // Which coach message indices have already played their typewriter
-  // reveal — tracked here (not inside the bubble's own State) so it
-  // survives the bubble being disposed/recreated as the list scrolls, and
-  // a message never "re-types" itself just because you scrolled back to
-  // it.
-  final Set<int> _typedIndices = {};
-
   @override
   void dispose() {
     textController.dispose();
@@ -70,6 +63,10 @@ class _CoachScreenState extends ConsumerState<CoachScreen> {
   @override
   Widget build(BuildContext context) {
     final messages = ref.watch(coachControllerProvider);
+    // Lives on the controller (survives leaving and reopening this screen
+    // within the same app session), not in this State — see its doc comment.
+    final typedIndices =
+        ref.read(coachControllerProvider.notifier).typedMessageIndices;
 
     return Scaffold(
       appBar: AppBar(
@@ -90,7 +87,7 @@ class _CoachScreenState extends ConsumerState<CoachScreen> {
 
                   final message = messages[index];
                   final animate =
-                      !message.isUser && !_typedIndices.contains(index);
+                      !message.isUser && !typedIndices.contains(index);
 
                   return _AnimatedEntry(
                     key: ValueKey(index),
@@ -104,8 +101,8 @@ class _CoachScreenState extends ConsumerState<CoachScreen> {
                           : null,
                       onTypingComplete: animate
                           ? () {
-                              if (!mounted) return;
-                              setState(() => _typedIndices.add(index));
+                              typedIndices.add(index);
+                              if (mounted) setState(() {});
                               _scrollToBottom();
                             }
                           : null,
