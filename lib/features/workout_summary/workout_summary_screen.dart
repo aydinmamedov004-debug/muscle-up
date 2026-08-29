@@ -72,13 +72,24 @@ class WorkoutSummaryScreen extends StatelessWidget {
             children: [
               const Spacer(),
               const Center(
-                child: Text(
-                  "🎉 Workout Complete!",
-                  style: TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  textAlign: TextAlign.center,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.celebration,
+                      size: 40,
+                      color: AppTheme.primary,
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      "Workout Complete!",
+                      style: TextStyle(
+                        fontSize: 26,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: 36),
@@ -98,12 +109,22 @@ class WorkoutSummaryScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        "🏅 Achievement Unlocked",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: AppTheme.accentSoft,
-                        ),
+                      const Row(
+                        children: [
+                          Icon(
+                            Icons.emoji_events,
+                            size: 18,
+                            color: AppTheme.accentSoft,
+                          ),
+                          SizedBox(width: 6),
+                          Text(
+                            "Achievement Unlocked",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: AppTheme.accentSoft,
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 8),
                       for (final achievement in summary.newlyUnlocked)

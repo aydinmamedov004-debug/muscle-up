@@ -33,12 +33,12 @@ class HomeScreen extends ConsumerWidget {
             : "Good evening";
 
     if (name == null || name.isEmpty) {
-      return "$timeOfDay! 💪";
+      return "$timeOfDay!";
     }
 
     final firstName = name.trim().split(' ').first;
 
-    return "$timeOfDay, $firstName! 💪";
+    return "$timeOfDay, $firstName!";
   }
 
   Future<void> _createFirstWorkout(
@@ -90,9 +90,20 @@ class HomeScreen extends ConsumerWidget {
         child: ListView(
           padding: const EdgeInsets.all(AppSpacing.lg),
           children: [
-            Text(
-              _greeting(user?.displayName),
-              style: Theme.of(context).textTheme.headlineLarge,
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    _greeting(user?.displayName),
+                    style: Theme.of(context).textTheme.headlineLarge,
+                  ),
+                ),
+                const Icon(
+                  Icons.bolt,
+                  color: AppTheme.primary,
+                  size: 32,
+                ),
+              ],
             ),
 
             const SizedBox(height: AppSpacing.sm),

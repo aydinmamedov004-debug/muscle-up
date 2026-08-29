@@ -136,6 +136,22 @@ class _AnimatedEntry extends StatelessWidget {
   }
 }
 
+/// Small leading avatar marking a message as the coach's, in place of an
+/// emoji in the bubble text — a placeholder for the mascot avatar once
+/// that's designed.
+class _CoachAvatar extends StatelessWidget {
+  const _CoachAvatar();
+
+  @override
+  Widget build(BuildContext context) {
+    return const CircleAvatar(
+      radius: 14,
+      backgroundColor: AppTheme.accentTint,
+      child: Icon(Icons.support_agent, size: 16, color: AppTheme.primary),
+    );
+  }
+}
+
 class _MessageBubble extends StatelessWidget {
   final ChatMessage message;
 
@@ -143,22 +159,43 @@ class _MessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bubble = Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      constraints: BoxConstraints(
+        maxWidth: MediaQuery.of(context).size.width * 0.75,
+      ),
+      decoration: BoxDecoration(
+        color: message.isUser ? AppTheme.primary : AppTheme.surfaceLight,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Text(
+        message.text,
+        style: const TextStyle(color: AppTheme.text),
+      ),
+    );
+
+    if (message.isUser) {
+      return Align(
+        alignment: Alignment.centerRight,
+        child: Container(
+          margin: const EdgeInsets.only(bottom: AppSpacing.sm),
+          child: bubble,
+        ),
+      );
+    }
+
     return Align(
-      alignment:
-          message.isUser ? Alignment.centerRight : Alignment.centerLeft,
+      alignment: Alignment.centerLeft,
       child: Container(
         margin: const EdgeInsets.only(bottom: AppSpacing.sm),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-        constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width * 0.75,
-        ),
-        decoration: BoxDecoration(
-          color: message.isUser ? AppTheme.primary : AppTheme.surfaceLight,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Text(
-          message.text,
-          style: const TextStyle(color: AppTheme.text),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            const _CoachAvatar(),
+            const SizedBox(width: AppSpacing.sm),
+            bubble,
+          ],
         ),
       ),
     );
@@ -172,18 +209,26 @@ class _TypingBubble extends StatelessWidget {
   Widget build(BuildContext context) {
     return Align(
       alignment: Alignment.centerLeft,
-      child: Container(
-        margin: const EdgeInsets.only(bottom: AppSpacing.sm),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        decoration: BoxDecoration(
-          color: AppTheme.surfaceLight,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: const SizedBox(
-          width: 14,
-          height: 14,
-          child: CircularProgressIndicator(strokeWidth: 2),
-        ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          const _CoachAvatar(),
+          const SizedBox(width: AppSpacing.sm),
+          Container(
+            margin: const EdgeInsets.only(bottom: AppSpacing.sm),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            decoration: BoxDecoration(
+              color: AppTheme.surfaceLight,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: const SizedBox(
+              width: 14,
+              height: 14,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+          ),
+        ],
       ),
     );
   }

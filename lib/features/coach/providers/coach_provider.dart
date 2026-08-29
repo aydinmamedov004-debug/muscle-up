@@ -53,10 +53,10 @@ class CoachController extends Notifier<List<ChatMessage>> {
         isUser: false,
         text: firstName == null
             ? "Hey! I'm your workout coach. Ask me anything about "
-                "training, form, or just need a pep talk before you lift 💪"
+                "training, form, or just need a pep talk before you lift."
             : "Hey $firstName! I'm your workout coach. Ask me anything "
                 "about training, form, or just need a pep talk before "
-                "you lift 💪",
+                "you lift.",
       ),
     ];
   }

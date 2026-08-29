@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../data/local/hive_service.dart';
 import '../../models/storage/workout_history.dart';
+import '../../shared/widgets/empty_state.dart';
 import 'widgets/workout_history_card.dart';
 import 'workout_details_screen.dart';
 
@@ -83,11 +84,10 @@ class HistoryScreen extends StatelessWidget {
             title: const Text("Workout History"),
           ),
           body: workouts.isEmpty
-              ? const Center(
-                  child: Text(
-                    "No workouts yet 💪",
-                    style: TextStyle(fontSize: 22),
-                  ),
+              ? const EmptyState(
+                  icon: Icons.history,
+                  title: "No Workouts Yet",
+                  subtitle: "Complete a workout to see it here.",
                 )
               : ListView.builder(
                   padding: const EdgeInsets.fromLTRB(
