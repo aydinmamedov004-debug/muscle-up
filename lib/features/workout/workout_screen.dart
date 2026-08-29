@@ -20,6 +20,7 @@ import '../../data/achievement_repository.dart';
 import '../../data/local/profile_provider.dart';
 import '../../data/local/workout_repository.dart';
 import '../../data/mappers/workout_mapper.dart';
+import '../../services/streak_reminder_service.dart';
 
 class WorkoutScreen extends ConsumerStatefulWidget {
   const WorkoutScreen({super.key});
@@ -96,6 +97,15 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> {
       final afterWeekDone = repository.getCurrentWeekCompletionFlags();
       final afterAchievements = achievementRepository.getStatuses(
         weeklyGoal: weeklyGoal,
+      );
+
+      // Today's workout is logged — re-evaluate whether tonight's streak
+      // reminder is still warranted (it usually isn't anymore).
+      unawaited(
+        StreakReminderService().refresh(
+          weeklyGoal: weeklyGoal,
+          weekCompletionFlags: afterWeekDone,
+        ),
       );
 
       final summary = WorkoutSummaryData(

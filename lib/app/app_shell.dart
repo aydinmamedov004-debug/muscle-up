@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -9,6 +11,7 @@ import '../features/home/home_screen.dart';
 import '../features/progress/progress_screen.dart';
 import '../features/settings/settings_screen.dart';
 import '../features/workout/workout_screen.dart';
+import '../services/streak_reminder_service.dart';
 import '../shared/widgets/keep_alive_wrapper.dart';
 
 class AppShell extends ConsumerStatefulWidget {
@@ -27,6 +30,18 @@ class _AppShellState extends ConsumerState<AppShell> {
     _pageController = PageController(
       initialPage: ref.read(navigationProvider),
     );
+
+    // Fire-and-forget: requests notification permission (a no-op prompt
+    // after the first decision) and schedules today's streak reminder if
+    // one is warranted. Reminders default on, so this is the natural
+    // first-run moment to ask, right after onboarding completes.
+    unawaited(() async {
+      final reminders = StreakReminderService();
+      if (reminders.isEnabled) {
+        await reminders.requestPermission();
+      }
+      await reminders.refreshForCurrentUser();
+    }());
   }
 
   @override

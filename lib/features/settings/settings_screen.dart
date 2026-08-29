@@ -10,6 +10,7 @@ import '../../core/theme/app_theme.dart';
 import '../../data/local/backup_service.dart';
 import '../../data/local/program_repository.dart';
 import '../../data/local/workout_repository.dart';
+import '../../services/streak_reminder_service.dart';
 import '../../shared/widgets/app_card.dart';
 import '../../shared/widgets/confirmation_dialog.dart';
 import '../../shared/widgets/section_header.dart';
@@ -19,8 +20,16 @@ import '../home/providers/dashboard_provider.dart';
 import '../programs/providers/active_program_provider.dart';
 import '../progress/providers/progress_provider.dart';
 
-class SettingsScreen extends ConsumerWidget {
+class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
+
+  @override
+  ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends ConsumerState<SettingsScreen> {
+  final _reminderService = StreakReminderService();
+  late bool remindersEnabled = _reminderService.isEnabled;
 
   Future<bool> _confirm(
     BuildContext context, {
@@ -36,6 +45,27 @@ class SettingsScreen extends ConsumerWidget {
     );
 
     return confirmed ?? false;
+  }
+
+  Future<void> _toggleReminders(bool enabled) async {
+    setState(() => remindersEnabled = enabled);
+    await _reminderService.setEnabled(enabled);
+
+    if (!enabled) return;
+
+    final granted = await _reminderService.requestPermission();
+    await _reminderService.refreshForCurrentUser();
+
+    if (!granted && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            "Notifications are blocked for this app — enable them in "
+            "system settings for reminders to actually show up.",
+          ),
+        ),
+      );
+    }
   }
 
   Future<void> _exportBackup(BuildContext context) async {
@@ -165,7 +195,7 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final user = ref.watch(authStateProvider).value;
     final isGuest = ref.watch(isGuestProvider);
 
@@ -229,6 +259,28 @@ class SettingsScreen extends ConsumerWidget {
               },
               icon: const Icon(Icons.logout),
               label: const Text("Sign Out"),
+            ),
+
+            const SizedBox(height: AppSpacing.xl),
+
+            const SectionHeader(title: "Notifications"),
+
+            AppCard(
+              padding: EdgeInsets.zero,
+              child: Material(
+                color: Colors.transparent,
+                borderRadius: AppRadius.large,
+                clipBehavior: Clip.antiAlias,
+                child: SwitchListTile(
+                  title: const Text("Streak Reminders"),
+                  subtitle: const Text(
+                    "A nudge in the evening if you haven't trained today "
+                    "and your weekly streak is at risk",
+                  ),
+                  value: remindersEnabled,
+                  onChanged: _toggleReminders,
+                ),
+              ),
             ),
 
             const SizedBox(height: AppSpacing.xl),
